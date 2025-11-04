@@ -1,0 +1,46 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  photoUrl: String
+}
+
+type Assessment @table {
+  user: User
+  assessmentDate: Date!
+  # traitScores: Map  # Use a custom scalar or a separate linked type if complex
+  createdAt: Timestamp!
+  notes: String
+}
+
+type PersonalityTrait @table {
+  name: String!
+  description: String!
+  keyIndicators: [String!]!
+  associatedStrengths: [String!]
+  associatedChallenges: [String!]
+}
+
+type Career @table {
+  title: String!
+  description: String!
+  createdAt: Timestamp!
+  typicalTasks: [String!]
+  requiredSkills: [String!]
+  educationRequirements: [String!]
+  averageSalaryRange: String
+}
+
+type CareerTraitMatch @table(key: ["career", "personalityTrait"]) {
+  career: Career!
+  personalityTrait: PersonalityTrait!
+  matchStrength: String!
+  reasoning: String
+}
+
+type UserFavoriteCareer @table(key: ["user", "career"]) {
+  user: User!
+  career: Career!
+  addedAt: Timestamp!
+  userNotes: String
+}

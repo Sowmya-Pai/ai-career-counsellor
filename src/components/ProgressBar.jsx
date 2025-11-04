@@ -1,0 +1,12 @@
+import React from "react";
+
+export default function ProgressBar({ value }) {
+  return (
+    <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+      <div
+        className="bg-blue-600 h-3 rounded-full transition-all"
+        style={{ width: `${value}%` }}
+      ></div>
+    </div>
+  );
+}
