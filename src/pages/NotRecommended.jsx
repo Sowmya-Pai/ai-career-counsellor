@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import html2canvas from "html2canvas";
 
-const mbtiNotRecommendedCareers = {
+export const mbtiNotRecommendedCareers = {
   INTJ: ["Sales", "CustomerService", "EventPlanning"],
   INTP: ["LawEnforcement", "RoutineOfficeWork", "Retail"],
   ENTJ: ["TechnicalLabor", "IsolatedResearch", "RoutineAdmin"],
@@ -20,7 +21,7 @@ const mbtiNotRecommendedCareers = {
   ESFP: ["HighlyTechnicalResearchJobs", "ExtensiveSoloWork"],
 };
 
-const notRecommendedDetails = {
+export const notRecommendedDetails = {
    Sales: `Focuses on promoting and selling products or services.
 Rewards confidence, communication, and persistence.
 Requires relationship building and persuasion.
@@ -322,6 +323,7 @@ Best for independent, introspective professionals.`,
 
 export default function NotRecommended() {
   const navigate = useNavigate();
+  const reportRef = useRef(null);
 
   const personalityData = JSON.parse(localStorage.getItem("personalityTraits") || "{}");
   const E = personalityData.E || 0;
@@ -344,6 +346,162 @@ export default function NotRecommended() {
 
   const avoidList = mbtiNotRecommendedCareers[mbti] || [];
 
+  async function downloadPDF() {
+    if (!reportRef.current) return;
+    const hidden = [];
+    const toHide = reportRef.current.querySelectorAll('[data-skip-pdf]');
+    toHide.forEach((el) => {
+      hidden.push({ el, display: el.style.display, visibility: el.style.visibility });
+      el.style.display = 'none';
+    });
+    // prefer capturing a chart SVG only (no icons); otherwise hide page chrome while capturing
+    const chartEl = reportRef.current.querySelector('svg');
+    const hideIcons = (root, exceptEl) => {
+      const iconSelectors = ['img', 'svg', '[data-icon]', '.icon', 'button svg', 'button img'];
+      const nodes = root.querySelectorAll(iconSelectors.join(','));
+      const hiddenLocal = [];
+      nodes.forEach((el) => {
+        if (!el) return;
+        if (exceptEl && (el === exceptEl || el.contains(exceptEl) || exceptEl.contains(el))) return;
+        hiddenLocal.push({ el, display: el.style.display, visibility: el.style.visibility });
+        el.style.display = 'none';
+      });
+      return hiddenLocal;
+    };
+
+    try {
+      // Try vector export first when a chart SVG exists
+      if (chartEl) {
+        const hiddenIcons = hideIcons(reportRef.current, chartEl);
+        try {
+          const { jsPDF } = await import("jspdf");
+          let svg2pdf;
+          try {
+            svg2pdf = (await import("svg2pdf.js")).default || (await import("svg2pdf.js"));
+          } catch (e) {
+            svg2pdf = null;
+          }
+
+          if (svg2pdf) {
+            const pdf = new jsPDF({ unit: "pt", format: "a4" });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 20;
+
+            const rect = chartEl.getBoundingClientRect();
+            const pxToPt = 72 / 96;
+            const svgWPt = rect.width * pxToPt;
+            const svgHPt = rect.height * pxToPt;
+            const scale = Math.min((pageWidth - margin * 2) / svgWPt, (pageHeight - margin * 2) / svgHPt, 1);
+            const targetW = svgWPt * scale;
+            const targetH = svgHPt * scale;
+            const x = Math.max(margin, (pageWidth - targetW) / 2);
+            const y = margin;
+
+            const svgClone = chartEl.cloneNode(true);
+            try {
+              const inlineStyles = (el) => {
+                const children = el.querySelectorAll ? el.querySelectorAll('*') : [];
+                [el, ...children].forEach((node) => {
+                  if (!(node instanceof Element)) return;
+                  const cs = window.getComputedStyle(node);
+                  const styleStr = [];
+                  ['font', 'font-size', 'font-family', 'font-weight', 'fill', 'stroke', 'stroke-width', 'text-anchor', 'letter-spacing'].forEach((k) => {
+                    const v = cs.getPropertyValue(k);
+                    if (v) styleStr.push(`${k}:${v}`);
+                  });
+                  if (styleStr.length) node.setAttribute('style', styleStr.join(';'));
+                });
+              };
+              inlineStyles(svgClone);
+            } catch (e) {}
+
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'fixed';
+            wrapper.style.left = '-9999px';
+            wrapper.style.top = '-9999px';
+            wrapper.appendChild(svgClone);
+            document.body.appendChild(wrapper);
+            try {
+              svg2pdf(svgClone, pdf, { x, y, width: targetW, height: targetH });
+              pdf.save(`not-recommended-${mbti || 'profile'}.pdf`);
+              return;
+            } finally {
+              document.body.removeChild(wrapper);
+            }
+          }
+        } finally {
+          hiddenIcons.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+        }
+      }
+
+      // Raster fallback
+      let canvas;
+      if (chartEl) {
+        const hiddenIcons = hideIcons(reportRef.current, chartEl);
+        try {
+          canvas = await html2canvas(chartEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        } finally {
+          hiddenIcons.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+        }
+      } else {
+        const globalHidden = [];
+        const globalToHide = document.querySelectorAll('header, footer, .logo');
+        globalToHide.forEach((el) => {
+          globalHidden.push({ el, display: el.style.display, visibility: el.style.visibility });
+          el.style.display = 'none';
+        });
+        const hiddenIcons = hideIcons(reportRef.current, null);
+        try {
+          canvas = await html2canvas(reportRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        } finally {
+          hiddenIcons.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+          globalHidden.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+        }
+      }
+
+      const imgData = canvas.toDataURL("image/png");
+      const { jsPDF } = await import("jspdf");
+      const pdf = new jsPDF({ unit: "pt", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 20;
+
+      let imgWidth = canvas.width;
+      let imgHeight = canvas.height;
+      const ratio = Math.min((pageWidth - margin * 2) / imgWidth, (pdf.internal.pageSize.getHeight() - margin * 2) / imgHeight);
+      imgWidth = imgWidth * ratio;
+      imgHeight = imgHeight * ratio;
+
+      const x = Math.max(margin, (pageWidth - imgWidth) / 2);
+      const y = margin;
+      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+      pdf.save(`not-recommended-${mbti || 'profile'}.pdf`);
+    } catch (err) {
+      const w = window.open("", "_blank");
+      if (!w) return alert("Popup blocked. Allow popups to download the PDF.");
+      w.document.write(document.documentElement.outerHTML);
+      w.document.close();
+      setTimeout(() => w.print(), 300);
+    } finally {
+      hidden.forEach(({ el, display, visibility }) => {
+        el.style.display = display || '';
+        el.style.visibility = visibility || '';
+      });
+    }
+  }
+
 
   return (
     <div style={styles.page}>
@@ -355,7 +513,7 @@ export default function NotRecommended() {
       </header>
 
       <main style={styles.container}>
-        <div style={styles.card}>
+        <div ref={reportRef} style={styles.card}>
           <h2 style={{ marginTop: 0 }}>Careers to Avoid for {mbti}</h2>
 
           {avoidList.length === 0 ? (
@@ -374,10 +532,11 @@ export default function NotRecommended() {
             ))
           )}
 
-          <div style={{ marginTop: 18 }}>
+          <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
             <button style={styles.primary} onClick={() => navigate("/assessment/graph-result")}>
               Back to Summary
             </button>
+            <button data-skip-pdf style={styles.pdfBtn} onClick={downloadPDF}>Download PDF</button>
           </div>
         </div>
       </main>

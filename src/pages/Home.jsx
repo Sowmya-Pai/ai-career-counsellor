@@ -126,7 +126,7 @@ export default function Home() {
       </main>
 
       <footer style={styles.footer}>
-        <div> 2023 AI Career Counsellor</div>
+        <div>© {new Date().getFullYear()} AI Career Counsellor</div>
       </footer>
     </div>
   );

@@ -9,7 +9,7 @@ import InterestTest from "./pages/InterestTest";
 import GraphResult from "./pages/GraphResult";
 import SuitableCareers from "./pages/SuitableCareers";
 import NotRecommended from "./pages/NotRecommended";
-import Report from "./pages/Report";
+// Report pages removed
 
 export default function App() {
   return (
@@ -24,8 +24,7 @@ export default function App() {
         <Route path="/assessment/interest-test" element={<InterestTest />} />
         <Route path="/assessment/graph-result" element={<GraphResult />} />
         <Route path="/assessment/suitable-careers" element={<SuitableCareers />} />
-        <Route path="/assessment/not-recommended" element={<NotRecommended />} />
-        <Route path="/assessment/report" element={<Report />} />
+    <Route path="/assessment/not-recommended" element={<NotRecommended />} />
         {/* Backward-compatible /results routes (optional) */}
         <Route path="/results" element={<GraphResult />} />
         <Route path="/results/suitable" element={<SuitableCareers />} />

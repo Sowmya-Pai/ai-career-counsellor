@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
+import html2canvas from "html2canvas";
 import { useNavigate } from "react-router-dom";
 
 /*
@@ -6,7 +7,7 @@ import { useNavigate } from "react-router-dom";
   and leader lines are not clipped. Legend remains one-line per item.
 */
 
-function PieChart({ data = [], size = 360, title }) {
+export function PieChart({ data = [], size = 360, title }) {
   const [hovered, setHovered] = useState(null);
 
   // Increased margin for better spacing
@@ -149,6 +150,7 @@ function PieChart({ data = [], size = 360, title }) {
 
 export default function GraphResult() {
   const navigate = useNavigate();
+  const reportRef = useRef(null);
   const personalityData = JSON.parse(localStorage.getItem("personalityTraits") || "{}");
   const interestData = JSON.parse(localStorage.getItem("interestTraits") || "{}");
 
@@ -215,6 +217,181 @@ export default function GraphResult() {
     navigate("/assessment/personality-test");
   };
 
+  async function downloadPDF() {
+    if (!reportRef.current) return;
+    // hide any elements we don't want included in the captured PDF (marked with data-skip-pdf)
+    const hidden = [];
+    const toHide = reportRef.current.querySelectorAll('[data-skip-pdf]');
+    toHide.forEach((el) => {
+      hidden.push({ el, display: el.style.display, visibility: el.style.visibility });
+      el.style.display = 'none';
+    });
+
+    // Prefer capturing the chart SVG only so icons and surrounding chrome are excluded
+    const chartEl = reportRef.current.querySelector('svg');
+    // helper to hide icon-like elements inside a root element (optionally excluding an element)
+    const hideIcons = (root, exceptEl) => {
+      const iconSelectors = ['img', 'svg', '[data-icon]', '.icon', 'button svg', 'button img'];
+      const nodes = root.querySelectorAll(iconSelectors.join(','));
+      const hiddenLocal = [];
+      nodes.forEach((el) => {
+        if (!el) return;
+        // don't hide the chart SVG or elements that contain the chart
+        if (exceptEl && (el === exceptEl || el.contains(exceptEl) || exceptEl.contains(el))) return;
+        hiddenLocal.push({ el, display: el.style.display, visibility: el.style.visibility });
+        el.style.display = 'none';
+      });
+      return hiddenLocal;
+    };
+    try {
+      // Try vector SVG -> PDF export first when a chart SVG is present
+      if (chartEl) {
+        // hide icons around the chart so they don't interfere
+        const hiddenIcons = hideIcons(reportRef.current, chartEl);
+        try {
+          const { jsPDF } = await import("jspdf");
+          let svg2pdf;
+          try {
+            // dynamic import so project doesn't break if package isn't installed
+            svg2pdf = (await import("svg2pdf.js")).default || (await import("svg2pdf.js"));
+          } catch (e) {
+            svg2pdf = null;
+          }
+
+          if (svg2pdf) {
+            // Use svg2pdf to render vector SVG into the PDF
+            const pdf = new jsPDF({ unit: "pt", format: "a4" });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 20;
+
+            // Compute svg dimensions in CSS pixels
+            const rect = chartEl.getBoundingClientRect();
+            const pxToPt = 72 / 96; // convert px -> pt
+            const svgWPt = rect.width * pxToPt;
+            const svgHPt = rect.height * pxToPt;
+
+            const scale = Math.min((pageWidth - margin * 2) / svgWPt, (pageHeight - margin * 2) / svgHPt, 1);
+            const targetW = svgWPt * scale;
+            const targetH = svgHPt * scale;
+            const x = Math.max(margin, (pageWidth - targetW) / 2);
+            const y = margin;
+
+            // Clone the SVG so we don't mutate the page; inline styles may be required for complex CSS-based charts
+            const svgClone = chartEl.cloneNode(true);
+
+            // Inline computed styles for text/labels so vector rendering preserves appearance (best-effort)
+            try {
+              const inlineStyles = (el) => {
+                const children = el.querySelectorAll ? el.querySelectorAll('*') : [];
+                [el, ...children].forEach((node) => {
+                  if (!(node instanceof Element)) return;
+                  const cs = window.getComputedStyle(node);
+                  const styleStr = [];
+                  // copy a subset of useful properties
+                  ['font', 'font-size', 'font-family', 'font-weight', 'fill', 'stroke', 'stroke-width', 'text-anchor', 'letter-spacing'].forEach((k) => {
+                    const v = cs.getPropertyValue(k);
+                    if (v) styleStr.push(`${k}:${v}`);
+                  });
+                  if (styleStr.length) node.setAttribute('style', styleStr.join(';'));
+                });
+              };
+              inlineStyles(svgClone);
+            } catch (e) {
+              // ignore style inlining errors
+            }
+
+            // svg2pdf expects an SVGElement attached to DOM in some environments; attach off-screen
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'fixed';
+            wrapper.style.left = '-9999px';
+            wrapper.style.top = '-9999px';
+            wrapper.appendChild(svgClone);
+            document.body.appendChild(wrapper);
+
+            try {
+              // render vector SVG into PDF at requested position/size
+              svg2pdf(svgClone, pdf, { x, y, width: targetW, height: targetH });
+              pdf.save(`graph-result-${getMBTI() || 'profile'}.pdf`);
+              return; // success; don't run raster fallback
+            } finally {
+              document.body.removeChild(wrapper);
+            }
+          }
+        } finally {
+          hiddenIcons.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+        }
+      }
+
+      // Fallback: rasterize using html2canvas (keeps earlier behavior)
+      let canvas;
+      if (chartEl) {
+        const hiddenIcons = hideIcons(reportRef.current, chartEl);
+        try {
+          canvas = await html2canvas(chartEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        } finally {
+          hiddenIcons.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+        }
+      } else {
+        const globalHidden = [];
+        const globalToHide = document.querySelectorAll('header, footer, .logo');
+        globalToHide.forEach((el) => {
+          globalHidden.push({ el, display: el.style.display, visibility: el.style.visibility });
+          el.style.display = 'none';
+        });
+        const hiddenIcons = hideIcons(reportRef.current, null);
+        try {
+          canvas = await html2canvas(reportRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        } finally {
+          hiddenIcons.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+          globalHidden.forEach(({ el, display, visibility }) => {
+            el.style.display = display || '';
+            el.style.visibility = visibility || '';
+          });
+        }
+      }
+
+      const imgData = canvas.toDataURL("image/png");
+      const { jsPDF } = await import("jspdf");
+      const pdf = new jsPDF({ unit: "pt", format: "a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 20;
+
+      let imgWidth = canvas.width;
+      let imgHeight = canvas.height;
+      const ratio = Math.min((pageWidth - margin * 2) / imgWidth, (pageHeight - margin * 2) / imgHeight);
+      imgWidth = imgWidth * ratio;
+      imgHeight = imgHeight * ratio;
+
+      const x = Math.max(margin, (pageWidth - imgWidth) / 2);
+      const y = margin;
+      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+      pdf.save(`graph-result-${getMBTI() || 'profile'}.pdf`);
+    } catch (err) {
+      const w = window.open("", "_blank");
+      if (!w) return alert("Popup blocked. Allow popups to download the PDF.");
+      w.document.write(document.documentElement.outerHTML);
+      w.document.close();
+      setTimeout(() => w.print(), 300);
+    } finally {
+      // restore hidden elements regardless of success/failure
+      hidden.forEach(({ el, display, visibility }) => {
+        el.style.display = display || '';
+        el.style.visibility = visibility || '';
+      });
+    }
+  }
+
   function getMBTI() {
     const E = personalityData.E || 0;
     const I = personalityData.I || 0;
@@ -241,7 +418,7 @@ export default function GraphResult() {
       </header>
 
       <main style={styles.container}>
-        <div style={styles.card}>
+  <div ref={reportRef} style={styles.card}>
           <div style={styles.topRow}>
             <div>
               <h2 style={{ margin: 0 }}>Your Complete Profile</h2>
@@ -250,7 +427,7 @@ export default function GraphResult() {
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={() => navigate("/assessment/suitable-careers")} style={styles.smallBtn}>Recommended</button>
               <button onClick={() => navigate("/assessment/not-recommended")} style={styles.smallBtnGhost}>Avoid</button>
-              <button onClick={() => navigate("/assessment/report")} style={styles.smallBtnReport}>Report</button>
+              <button data-skip-pdf onClick={downloadPDF} style={styles.smallBtnPrint}>Download PDF</button>
               <button onClick={handleRestart} style={styles.smallBtnAlt}>Retake</button>
             </div>
           </div>

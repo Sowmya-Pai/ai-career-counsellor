@@ -9,6 +9,7 @@ export default function Navbar() {
         <nav className="space-x-4">
           <Link to="/" className="text-sm text-gray-600 hover:underline">Home</Link>
           <Link to="/assessment" className="text-sm text-gray-600 hover:underline">Assessment</Link>
+          {/* Combined Report removed */}
         </nav>
       </div>
     </header>
