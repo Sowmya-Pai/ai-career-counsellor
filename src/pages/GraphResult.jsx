@@ -227,6 +227,7 @@ export default function GraphResult() {
     return (E >= I ? "E" : "I") + (S >= N ? "S" : "N") + (T >= F ? "T" : "F") + (J >= P ? "J" : "P");
   }
 
+
   return (
     <div style={styles.page}>
       <header style={styles.header}>
@@ -249,7 +250,7 @@ export default function GraphResult() {
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={() => navigate("/assessment/suitable-careers")} style={styles.smallBtn}>Recommended</button>
               <button onClick={() => navigate("/assessment/not-recommended")} style={styles.smallBtnGhost}>Avoid</button>
-              <button onClick={() => navigate("/report")} style={styles.smallBtnReport}>Report</button>
+              <button onClick={() => navigate("/assessment/report")} style={styles.smallBtnReport}>Report</button>
               <button onClick={handleRestart} style={styles.smallBtnAlt}>Retake</button>
             </div>
           </div>
@@ -316,8 +317,9 @@ const styles = {
   topRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 },
   smallBtn: { background: "#0b5ed7", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
   smallBtnGhost: { background: "#fff", color: "#374151", border: "1px solid #e5e7eb", padding: "8px 12px", borderRadius: 8 },
-  smallBtnReport: { background: "#10b981", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8 },
-  smallBtnAlt: { background: "#6c63ff", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8 },
+  smallBtnReport: { background: "#10b981", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
+  smallBtnPrint: { background: "#f59e0b", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
+  smallBtnAlt: { background: "#6c63ff", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
 
   // ✅ UPDATED TO STACK CHARTS VERTICALLY
   twoColumn: {

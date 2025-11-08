@@ -25,7 +25,7 @@ export default function App() {
         <Route path="/assessment/graph-result" element={<GraphResult />} />
         <Route path="/assessment/suitable-careers" element={<SuitableCareers />} />
         <Route path="/assessment/not-recommended" element={<NotRecommended />} />
-        <Route path="/report" element={<Report />} />
+        <Route path="/assessment/report" element={<Report />} />
         {/* Backward-compatible /results routes (optional) */}
         <Route path="/results" element={<GraphResult />} />
         <Route path="/results/suitable" element={<SuitableCareers />} />

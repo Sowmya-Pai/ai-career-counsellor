@@ -2,98 +2,322 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const mbtiNotRecommendedCareers = {
-  INTJ: ["Sales", "CustomerService", "Event Planning"],
-  INTP: ["Law Enforcement", "Routine Office Work", "Retail"],
-  ENTJ: ["Technical Labor", "Isolated Research", "Routine Admin"],
-  ENTP: ["Highly Repetitive Tasks", "Detail-Oriented Admin", "Long Static Work"],
-  INFJ: ["High-Pressure Sales", "Manual Labor", "Rigid Bureaucracies"],
-  INFP: ["Highly Competitive Sales", "Large Corporations with Little Autonomy"],
-  ENFJ: ["Highly Technical Roles", "Isolated Work Without Interaction"],
-  ENFP: ["Monotonous Assembly Line", "Strict Rules", "No Creativity"],
-  ISTJ: ["Creative Arts", "Improvisation Required Work"],
-  ISFJ: ["High Competition", "High Pressure Sales"],
-  ESTJ: ["Ambiguous Roles With No Structure"],
-  ESFJ: ["Technical Research", "Isolated Analytical Jobs"],
-  ISTP: ["Highly Social Roles Needing Diplomatic Skills"],
-  ISFP: ["Highly Competitive Corporate Sales"],
-  ESTP: ["Desk-Bound, No Action Roles"],
-  ESFP: ["Highly Technical Research Jobs", "Extensive Solo Work"],
+  INTJ: ["Sales", "CustomerService", "EventPlanning"],
+  INTP: ["LawEnforcement", "RoutineOfficeWork", "Retail"],
+  ENTJ: ["TechnicalLabor", "IsolatedResearch", "RoutineAdmin"],
+  ENTP: ["HighlyRepetitiveTasks", "DetailOrientedAdmin", "LongStaticWork"],
+  INFJ: ["HighPressureSales", "ManualLabor", "RigidBureaucracies"],
+  INFP: ["HighlyCompetitiveSales", "LargeCorporationswithLittleAutonomy"],
+  ENFJ: ["HighlyTechnicalRoles", "IsolatedWorkWithoutInteraction"],
+  ENFP: ["MonotonousAssemblyLine", "StrictRules", "NoCreativity"],
+  ISTJ: ["CreativeArts", "ImprovisationRequiredWork"],
+  ISFJ: ["HighCompetition", "HighPressureSales"],
+  ESTJ: ["AmbiguousRolesWithNoStructure"],
+  ESFJ: ["TechnicalResearch", "IsolatedAnalyticalJobs"],
+  ISTP: ["HighlySocialRolesNeedingDiplomaticSkills"],
+  ISFP: ["HighlyCompetitiveCorporateSales"],
+  ESTP: ["DeskBoundNoActionRoles"],
+  ESFP: ["HighlyTechnicalResearchJobs", "ExtensiveSoloWork"],
 };
 
 const notRecommendedDetails = {
-  Sales: `Sales roles often require continuous social persuasion and rapid rapport building.
-They demand tolerance for frequent rejection and shifting targets.
-High-pressure quota environments can cause stress and burnout.
-They are unsuitable when preference is for solitary or analytical work.
-Sales often rewards extroversion and quick emotional recovery from setbacks.
-Irregular hours and travel may conflict with stable routines.
-They can clash with values-driven or highly structured personalities.
-Consider alternatives that offer predictable routines and lower interpersonal strain.`,
+   Sales: `Focuses on promoting and selling products or services.
+Rewards confidence, communication, and persistence.
+Requires relationship building and persuasion.
+Can feel stressful for reflective or analytical individuals.
+Demands resilience against rejection and target pressure.
+Offers high earning potential but emotional fatigue.
+May underuse strategic or creative problem-solving.
+Best for socially energetic, goal-driven personalities.`,
 
-  CustomerService: `Customer service involves sustained, frequent interpersonal emotional labor.
-It requires constant reaction to unpredictable user needs and conflicts.
-High-volume interactions can cause cognitive and emotional fatigue.
-This role can be unsuitable for those who prefer deep, focused tasks.
-Often enforces strict scripts and offers limited autonomy.
-It rewards high patience, rapid conflict resolution and resilience.
-Work can be repetitive with little creative control or growth.
-Consider roles with structured tasks or independent work if this is draining.`,
+  CustomerService: `Involves direct interaction with clients and customers.
+Rewards patience, empathy, and quick problem-solving.
+Requires managing expectations and emotional responses.
+Can feel draining for private or independent individuals.
+Demands calmness under pressure and constant communication.
+Offers immediate feedback but limited autonomy.
+May under-stimulate analytical or conceptual strengths.
+Best for compassionate, adaptable communicators.`,
 
-  EventPlanning: `Event planning is fast-paced and requires extreme multitasking.
-It demands tolerance for last-minute changes and high stress.
-Involves long hours, variable schedules and on-site coordination.
-Unsuitable for those who prefer predictable, methodical work.
-Rewards improvisation, negotiation and logistics skill.
-Offers frequent crisis management rather than routine tasks.
-Can be socially and emotionally draining during peak events.
-Avoid if you prefer stable schedules and low-adrenaline responsibilities.`,
+    EventPlanning: `Involves organizing logistics, vendors, and client experiences.
+Rewards creativity, multitasking, and adaptability.
+Demands calm under time pressure and last-minute changes.
+May overwhelm reflective or analytical personalities.
+Requires constant coordination and social energy.
+Offers visible results but frequent stress cycles.
+Can feel unpredictable for structured thinkers.
+Best for spontaneous, socially confident individuals.`,
 
-  LawEnforcement: `Law enforcement faces unpredictable, high-risk and emotionally intense situations.
-It requires quick operational decisions and physical readiness.
-Often involves exposure to traumatic events and high stress.
-Unsuitable for highly risk-averse or research-oriented personalities.
-Demands strict protocols and adherence to chain-of-command.
-Can limit creative autonomy and reflective work time.
-Provides strong structure but may conflict with introspective preferences.
-Consider lower-risk public service or analytical roles as alternatives.`,
+  LawEnforcement: `Focuses on enforcing laws and ensuring public safety.
+Rewards discipline, courage, and quick judgment.
+Demands composure under pressure and strict rule adherence.
+May feel restrictive for flexible or imaginative types.
+Requires teamwork and compliance with hierarchy.
+Offers purpose but emotional and physical stress.
+Can limit autonomy and creative expression.
+Better for structured, decisive individuals.`,
 
-  RoutineOfficeWork: `Routine office work consists of repetitive, narrowly-scoped tasks.
-It provides limited cognitive challenge for creative or investigative minds.
-Rewards meticulousness and consistency over innovation.
-Unsuitable for those who need novelty, autonomy, or conceptual work.
-Often involves tight procedures and little strategic input.
-Can lead to boredom and disengagement for variety-seekers.
-May stifle growth for people seeking complex problem solving.
-Consider roles with project variety or increasing responsibility instead.`,
+  RoutineOfficeWork: `Centers on clerical, documentation, and process repetition.
+Rewards consistency, organization, and accuracy.
+Requires patience with data entry and routine tasks.
+May bore imaginative or big-picture personalities.
+Offers predictability but limited intellectual challenge.
+Demands long focus on procedural correctness.
+Can underuse creativity or strategic thinking.
+Best for steady, task-oriented workers.`,
 
-  ManualLabor: `Manual labor demands sustained physical effort and often harsh conditions.
-It provides limited alignment for those who prefer cognitive or design work.
-Involves predictable, repetitive physical tasks with higher injury risk.
-Unsuitable for people seeking intellectual challenge or flexible schedules.
-Rewards physical skill, endurance and practical problem solving.
-Often offers less autonomy and creative control over processes.
-Can be physically taxing over long careers without proper supports.
-Consider hybrid roles or vocational training if physical work is not preferred.`,
+  Retail: `Involves customer interaction, sales, and merchandise handling.
+Rewards energy, patience, and service focus.
+Requires adaptability to diverse customers and busy hours.
+May drain introverted or analytical personalities.
+Offers immediate feedback but limited autonomy.
+Demands emotional control and conflict resolution.
+Can feel repetitive for strategic or conceptual types.
+Better for expressive, people-oriented communicators.`,
 
-  HighlyRepetitiveTasks: `These roles require performing the same actions with minimal variation.
-They offer little opportunity for creativity or strategic thinking.
-Lead to rapid boredom and reduced motivation for novelty seekers.
-Unsuitable for investigative, creative or leadership personalities.
-Reward consistency, speed and error-free execution rather than innovation.
-Often have low decision-making autonomy and limited growth paths.
-Can cause cognitive fatigue and disengagement over time.
-Consider roles with varied responsibilities or problem-solving components instead.`,
+  TechnicalLabor: `Involves hands-on technical maintenance or mechanical work.
+Rewards precision, endurance, and process reliability.
+Requires repetitive, method-driven task completion.
+May frustrate visionary or leadership-oriented thinkers.
+Offers tangible output and job stability.
+Demands focus on details and safety protocols.
+Can lack creative or strategic variation.
+Best for practical, steady implementers.`,
 
-  HighlyTechnicalResearchJobs: `Very technical research roles often involve deep, solitary specialization.
-They require tolerance for long projects with slow feedback cycles.
-Demand advanced domain knowledge and specialized methods.
-Can feel isolating if social interaction or applied impact is preferred.
-Reward precision, patience and rigorous scientific training.
-May offer fewer visible short-term impacts and slower career milestones.
-Unsuitable for those who prefer team-driven, applied or people-focused roles.
-Consider applied R&D or cross-functional roles for more collaboration and impact.`,
+  IsolatedResearch: `Centers on solitary study and data analysis.
+Rewards focus, independence, and patience.
+Requires minimal collaboration and prolonged solitude.
+May disengage socially motivated personalities.
+Offers intellectual depth but limited variety.
+Demands sustained attention and long-term focus.
+Can feel monotonous for energetic communicators.
+Better for independent, reflective thinkers.`,
 
-  // Add other career details as needed
+  RoutineAdmin: `Handles procedural records, scheduling, and coordination.
+Rewards reliability, consistency, and organization.
+Requires rule-following and deadline management.
+May frustrate creative or flexible individuals.
+Offers stable, predictable environments.
+Demands long attention to repetitive details.
+Can limit strategic decision-making opportunities.
+Better for structured, dependable workers.`,
+
+  HighlyRepetitiveTasks: `Focuses on repeating identical procedures daily.
+Rewards patience, accuracy, and discipline.
+Requires comfort with routine and low variety.
+Can feel draining for creative or innovative minds.
+Offers predictability but limited growth.
+Demands endurance and steady focus.
+May cause disengagement for dynamic individuals.
+Better for those valuing structure over novelty.`,
+
+  DetailOrientedAdmin: `Emphasizes precision in administrative documentation.
+Rewards patience, diligence, and thoroughness.
+Requires sustained attention to minor details.
+May frustrate big-picture or spontaneous thinkers.
+Offers predictable structure and reliability.
+Demands adherence to systems and protocol.
+Can feel confining for conceptual individuals.
+Better for meticulous, process-driven professionals.`,
+
+  LongStaticWork: `Involves extended sedentary tasks and low variation.
+Rewards endurance, patience, and focus.
+Requires minimal movement and sustained attention.
+Can be tiring for active or extroverted individuals.
+Offers quiet stability but little stimulation.
+Demands persistence through repetition.
+May under-engage fast-paced personalities.
+Best for calm, steady workers.`,
+
+  HighPressureSales: `Demands constant persuasion under performance stress.
+Rewards competitiveness and resilience.
+Requires rapid thinking and social adaptability.
+Can feel draining for empathetic or calm personalities.
+Offers high rewards but emotional volatility.
+Demands rejection tolerance and persistent energy.
+May conflict with values-driven or reserved individuals.
+Better for assertive, results-oriented sellers.`,
+
+  ManualLabor: `Focuses on physical effort and endurance-based tasks.
+Rewards strength, discipline, and persistence.
+Requires adherence to safety and time constraints.
+Can feel monotonous for strategic or creative thinkers.
+Offers tangible results and team involvement.
+Demands consistency in output and physical stamina.
+May limit intellectual engagement.
+Better for pragmatic, action-oriented workers.`,
+
+  RigidBureaucracies: `Operates within strict hierarchy and process compliance.
+Rewards discipline, rule-following, and documentation.
+Requires patience with procedures and red tape.
+Can frustrate adaptable or innovative personalities.
+Offers job security but limited autonomy.
+Demands tolerance for slow-paced decision-making.
+May stifle creativity and independent thinking.
+Better for structured, process-focused individuals.`,
+
+  HighlyCompetitiveSales: `Centers on aggressive targets and performance metrics.
+Rewards persuasion, energy, and persistence.
+Requires constant networking and competition.
+Can exhaust reflective or peace-oriented types.
+Offers financial reward but emotional fluctuation.
+Demands tolerance for rejection and pressure.
+May clash with collaborative or ethical mindsets.
+Best for assertive, target-driven professionals.`,
+
+  LargeCorporationswithLittleAutonomy: `Operates within hierarchical systems and fixed roles.
+Rewards consistency, compliance, and loyalty.
+Requires navigating bureaucracy and limited flexibility.
+Can frustrate autonomous or creative thinkers.
+Offers stability but minimal personal control.
+Demands patience and respect for authority.
+May underuse initiative or individuality.
+Better for structured, patient employees.`,
+
+  HighlyTechnicalRoles: `Focuses on deep specialization and technical rigor.
+Rewards precision, logic, and concentration.
+Requires learning complex systems in detail.
+May alienate relationally focused individuals.
+Offers stability but little emotional engagement.
+Demands technical accuracy over flexibility.
+Can feel isolating for communicative personalities.
+Best for analytical, system-driven professionals.`,
+
+  IsolatedWorkWithoutInteraction: `Centers on independent tasks with minimal teamwork.
+Rewards focus, solitude, and self-discipline.
+Requires long hours of concentration alone.
+May demotivate social or collaborative personalities.
+Offers autonomy but limited external stimulation.
+Demands reliability without supervision.
+Can cause disconnection for empathetic individuals.
+Better for introspective, self-reliant workers.`,
+
+  MonotonousAssemblyLine: `Involves repetitive production tasks in sequence.
+Rewards steadiness, focus, and reliability.
+Requires physical endurance and consistency.
+Can frustrate creative or adaptive personalities.
+Offers stability but minimal variation.
+Demands adherence to timing and safety protocols.
+May underuse strategic or conceptual strengths.
+Best for patient, process-oriented individuals.`,
+
+  StrictRules: `Operates under fixed policies with no flexibility.
+Rewards order, compliance, and consistency.
+Requires following procedure without deviation.
+Can restrict imaginative or adaptive thinkers.
+Offers predictability but little autonomy.
+Demands patience and respect for hierarchy.
+May discourage creative problem solving.
+Better for disciplined, rule-abiding workers.`,
+
+  NoCreativity: `Focuses solely on routine or procedural execution.
+Rewards compliance, order, and precision.
+Requires repetition with minimal variation.
+Can frustrate expressive or innovative personalities.
+Offers clarity and predictability.
+Demands patience over improvisation.
+May limit engagement for idea-driven workers.
+Better for those who value order and stability.`,
+
+  CreativeArts: `Focuses on open-ended artistic self-expression.
+Rewards imagination and emotional resonance.
+Requires tolerance for ambiguity and variable income.
+Can feel unstable for structure-seeking individuals.
+Offers fulfillment but lacks predictability.
+Demands creative risk-taking and perseverance.
+May unsettle those preferring rules and routine.
+Best for intuitive, flexible creators.`,
+
+  ImprovisationRequiredWork: `Demands quick adaptation and unscripted decision-making.
+Rewards flexibility, confidence, and spontaneity.
+Requires thinking on your feet in uncertain settings.
+May overwhelm structured or cautious personalities.
+Offers dynamic engagement but minimal predictability.
+Demands comfort with change and incomplete plans.
+May frustrate methodical, steady individuals.
+Better for outgoing, improvisational communicators.`,
+
+  HighCompetition: `Emphasizes performance in rivalry-based environments.
+Rewards ambition, confidence, and persistence.
+Requires endurance under constant comparison.
+Can feel draining for harmony-oriented individuals.
+Offers motivation but increases stress and instability.
+Demands resilience against loss or failure.
+May conflict with cooperative, empathetic values.
+Best for assertive, goal-oriented professionals.`,
+
+  AmbiguousRolesWithNoStructure: `Lack clear guidelines or defined responsibilities.
+Rewards adaptability, initiative, and independence.
+Requires tolerance for uncertainty and self-management.
+Can stress individuals who prefer defined systems.
+Offers freedom but inconsistent expectations.
+Demands problem-solving without clear direction.
+May reduce efficiency for rule-oriented thinkers.
+Better for flexible, self-starting personalities.`,
+
+  TechnicalResearch: `Involves deep scientific or data-driven investigation.
+Rewards precision, patience, and logic.
+Requires detailed focus and procedural rigor.
+Can feel isolating for outgoing or empathetic workers.
+Offers intellectual challenge but low interaction.
+Demands commitment to long study periods.
+May underuse creative or social strengths.
+Better for patient, analytical researchers.`,
+
+  IsolatedAnalyticalJobs: `Centers on data processing and solo problem-solving.
+Rewards accuracy, persistence, and independence.
+Requires focus without external collaboration.
+Can disengage socially driven personalities.
+Offers autonomy but limited teamwork.
+Demands patience with routine analysis.
+May under-stimulate expressive individuals.
+Better for focused, solitary analysts.`,
+
+  HighlySocialRolesNeedingDiplomaticSkills: `Involves negotiation, empathy, and emotional awareness.
+Rewards communication, tact, and adaptability.
+Requires constant social engagement and diplomacy.
+May exhaust private or task-focused individuals.
+Offers variety but emotional complexity.
+Demands sensitivity to others’ needs and cues.
+Can feel draining for action-oriented workers.
+Better for socially intuitive, emotionally balanced people.`,
+
+  HighlyCompetitiveCorporateSales: `Centers on target-driven persuasion and client retention.
+Rewards charisma, persistence, and networking ability.
+Requires handling rejection and pressure professionally.
+May drain reflective or steady personalities.
+Offers financial reward but unstable emotional balance.
+Demands constant adaptability to market change.
+Can conflict with altruistic or process-focused values.
+Better for assertive, performance-oriented individuals.`,
+
+  DeskBoundNoActionRoles: `Involves long sedentary periods and routine paperwork.
+Rewards focus, patience, and stability.
+Requires minimal movement or active engagement.
+Can frustrate physically driven or adventurous people.
+Offers safety and predictability but low excitement.
+Demands endurance for repetitive tasks.
+May reduce motivation for dynamic personalities.
+Best for calm, methodical workers.`,
+
+  HighlyTechnicalResearchJobs: `Engages in specialized study and controlled experimentation.
+Rewards thoroughness, concentration, and discipline.
+Requires long solitary focus on technical precision.
+Can disengage expressive or high-energy individuals.
+Offers intellectual fulfillment but minimal variety.
+Demands adherence to rigid protocols and standards.
+May underuse interpersonal strengths.
+Better for patient, meticulous researchers.`,
+
+  ExtensiveSoloWork: `Focuses on independent output without collaboration.
+Rewards focus, discipline, and autonomy.
+Requires self-motivation and consistent performance.
+Can isolate social or team-driven personalities.
+Offers freedom but minimal feedback or support.
+Demands patience and time management.
+May reduce engagement for socially oriented workers.
+Best for independent, introspective professionals.`,
+
 };
 
 export default function NotRecommended() {
@@ -119,6 +343,7 @@ export default function NotRecommended() {
   const mbti = getMBTI();
 
   const avoidList = mbtiNotRecommendedCareers[mbti] || [];
+
 
   return (
     <div style={styles.page}>
@@ -210,6 +435,22 @@ const styles = {
   },
   primary: {
     background: "#0b5ed7",
+    color: "#fff",
+    border: "none",
+    padding: "10px 16px",
+    borderRadius: 8,
+    cursor: "pointer",
+  },
+  pdfBtn: {
+    background: "#10b981",
+    color: "#fff",
+    border: "none",
+    padding: "10px 16px",
+    borderRadius: 8,
+    cursor: "pointer",
+  },
+  printBtn: {
+    background: "#f59e0b",
     color: "#fff",
     border: "none",
     padding: "10px 16px",

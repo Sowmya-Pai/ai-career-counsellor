@@ -1,10 +1,69 @@
-import React from "react";
+import React, { useMemo, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
-/*
-  Report page: combines GraphResult summary, SuitableCareers details and NotRecommended details.
-  Provides Download JSON, Download PDF (via jsPDF if installed) and Print options.
-*/
+// PieChart component from GraphResult
+function PieChart({ data = [], size = 360, title }) {
+  const [hovered, setHovered] = useState(null);
+  const margin = 120;
+  const svgSize = size + margin * 2;
+  const cx = svgSize / 2;
+  const cy = svgSize / 2;
+  const r = size / 2 - 50;
+
+  const total = data.reduce((s, d) => s + Math.max(0, d.value), 0) || 1;
+
+  let acc = 0;
+  const slices = data.map((d, i) => {
+    const value = Math.max(0, d.value);
+    const start = (acc / total) * Math.PI * 2;
+    acc += value;
+    const end = (acc / total) * Math.PI * 2;
+    const mid = (start + end) / 2;
+    const large = end - start > Math.PI ? 1 : 0;
+
+    const x1 = cx + r * Math.cos(start);
+    const y1 = cy + r * Math.sin(start);
+    const x2 = cx + r * Math.cos(end);
+    const y2 = cy + r * Math.sin(end);
+
+    const labelRadius = r + 40;
+    const labelX = cx + labelRadius * Math.cos(mid);
+    const labelY = cy + labelRadius * Math.sin(mid);
+
+    const path = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+    const percent = (value / total) * 100;
+
+    return { ...d, path, mid, labelX, labelY, percent, i };
+  });
+
+  return (
+    <div style={{ display: "flex", gap: 32, alignItems: "flex-start", justifyContent: "center", marginBottom: 30 }}>
+      <svg width={svgSize} height={svgSize} viewBox={`0 0 ${svgSize} ${svgSize}`} style={{ overflow: "visible" }}>
+        {title && (
+          <text x={cx} y={40} textAnchor="middle" fontSize={16} fontWeight={700} fill="#111827">
+            {title}
+          </text>
+        )}
+        {slices.map((s) => (
+          <g key={s.label + s.i} onMouseEnter={() => setHovered(s.i)} onMouseLeave={() => setHovered(null)} style={{ cursor: "pointer" }}>
+            <path d={s.path} fill={s.color} stroke="#fff" strokeWidth="2" opacity={s.value === 0 ? 0.25 : 1} />
+            <g opacity={s.value === 0 ? 0.5 : 1}>
+              <line x1={cx + r * Math.cos(s.mid)} y1={cy + r * Math.sin(s.mid)} x2={s.labelX} y2={s.labelY} stroke="#9ca3af" strokeWidth="1" />
+              <text x={s.labelX} y={s.labelY} textAnchor={s.labelX < cx ? "end" : "start"} fontSize={12} fill={hovered === s.i ? "#0b1724" : "#374151"} fontWeight={hovered === s.i ? 600 : 500} dy="0.3em">
+                {s.label} ({s.percent.toFixed(1)}%)
+              </text>
+            </g>
+          </g>
+        ))}
+        <circle cx={cx} cy={cy} r={r * 0.36} fill="#fff" stroke="rgba(15,23,42,0.04)" />
+        <text x={cx} y={cy} textAnchor="middle" fontSize={13} fill="#6b7280" dy="-0.5em">Total traits:</text>
+        <text x={cx} y={cy} textAnchor="middle" fontSize={16} fill="#0b5ed7" dy="1em" fontWeight={600}>{slices.length}</text>
+      </svg>
+    </div>
+  );
+}
 
 const mbtiCareers = {
   INTJ: ["Scientist", "Engineer", "Architect", "Software Developer"],
@@ -145,6 +204,32 @@ export default function Report() {
     recommendedCareers: recommended,
     avoidCareers: avoidList,
   };
+
+  // Trait data for PieChart from GraphResult
+  const allTraits = useMemo(() => {
+    const personalityTraits = [
+      { label: "Extraversion", value: personalityData.E || 0, color: "#6366f1" },
+      { label: "Introversion", value: personalityData.I || 0, color: "#818cf8" },
+      { label: "Sensing", value: personalityData.S || 0, color: "#06b6d4" },
+      { label: "Intuition", value: personalityData.N || 0, color: "#22d3ee" },
+      { label: "Thinking", value: personalityData.T || 0, color: "#f97316" },
+      { label: "Feeling", value: personalityData.F || 0, color: "#fb923c" },
+      { label: "Judging", value: personalityData.J || 0, color: "#10b981" },
+      { label: "Perceiving", value: personalityData.P || 0, color: "#34d399" },
+    ];
+
+    const interestColors = ["#ef4444", "#f59e0b", "#84cc16", "#06b6d4", "#6366f1", "#8b5cf6", "#ec4899", "#f43f5e"];
+    const interestEntries = Object.entries(interestData);
+    const interestTraits = interestEntries.length > 0 
+      ? interestEntries.map(([key, value], idx) => ({
+          label: key,
+          value: value,
+          color: interestColors[idx % interestColors.length]
+        }))
+      : [];
+
+    return [...personalityTraits, ...interestTraits.slice(0, 8)];
+  }, [personalityData, interestData]);
 
   function downloadJSON() {
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
@@ -296,6 +381,12 @@ export default function Report() {
         <section style={{ marginBottom: 12 }}>
           <strong>Generated:</strong> <span style={{ color: "#374151" }}>{generatedAt}</span><br />
           <strong>MBTI:</strong> <span style={{ color: "#0b5ed7" }}>{mbti}</span>
+        </section>
+
+        {/* Pie Chart Section */}
+        <section style={{ marginTop: 20, marginBottom: 30 }}>
+          <h3 style={{ marginTop: 0, textAlign: "center" }}>Personality & Interest Profile</h3>
+          <PieChart data={allTraits} size={400} title="Complete Profile Analysis" />
         </section>
 
         <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>

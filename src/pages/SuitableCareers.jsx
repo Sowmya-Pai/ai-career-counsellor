@@ -15,7 +15,7 @@ const mbtiCareers = {
   ESTJ: ["Project Manager", "Banker", "Executive", "Judge"],
   ESFJ: ["Nurse", "Teacher", "Social Worker", "Event Planner"],
   ISTP: ["Engineer", "Mechanic", "Pilot", "Detective"],
-  ISFP: ["Designer", "Chef", "Artist", "PhysicalTherapist"],
+  ISFP: ["Designer", "Chef", "Artist", "Physical Therapist"],
   ESTP: ["Sales", "Detective", "Entrepreneur", "Paramedic"],
   ESFP: ["Performer", "Guide", "Event Coordinator", "Fitness Trainer"],
 };
@@ -126,8 +126,44 @@ Involves research, precedent and precise writing.
 Rewards rigorous reasoning and negotiation skill.
 Offers defined career paths and professional status.
 Requires discipline for long-form preparation and review.
-Matches preference for systemized frameworks and rules.
+Matches preference for rule-based and systematic tasks.
 Fits those who want to influence outcomes through law.`,
+
+  Inventor: `Creates new products, tools or processes.
+Suited to curious, experimental and persistent thinkers.
+Involves ideation, prototyping and refinement.
+Rewards originality and cross-disciplinary thinking.
+Offers potential for innovation and recognition.
+Requires resilience to trial and failure cycles.
+Matches preference for autonomy and novelty.
+Appeals to those who turn imagination into reality.`,
+
+  Consultant: `Advises organizations through problem analysis and strategy.
+Suited to analytical, communicative and adaptable individuals.
+Involves diagnosing issues and proposing actionable solutions.
+Rewards efficiency, clarity and impact-oriented results.
+Offers diverse project exposure and professional growth.
+Requires structured communication and quick learning.
+Matches preference for varied, fast-paced work.
+Fits those who enjoy solving complex challenges.`,
+
+  Journalist: `Investigates, writes and communicates stories for the public.
+Suited to observant, curious and expressive thinkers.
+Involves research, interviews and storytelling.
+Rewards clarity, integrity and narrative skill.
+Requires meeting deadlines and adapting to breaking events.
+Offers opportunities to inform and influence audiences.
+Matches preference for inquiry and real-world engagement.
+Appeals to those passionate about truth and communication.`,
+
+  Marketer: `Promotes products and ideas to target audiences.
+Suited to creative, analytical and persuasive individuals.
+Involves campaign planning, branding and trend analysis.
+Rewards innovation, timing and emotional insight.
+Offers roles in digital, product or brand management.
+Requires balancing creativity with measurable results.
+Matches preference for dynamic, people-centric work.
+Fits those who enjoy influencing perception and behavior.`,
 
   Counselor: `Provides emotional support and guided problem-solving.
 Suited to empathetic, patient and listening-focused people.
@@ -192,6 +228,42 @@ Matches preference for measurable creative impact.
 Adapts to fast feedback cycles and market shifts.
 Fits those who enjoy shaping perception and growth.`,
 
+  Actor: `Brings characters and stories to life through performance.
+Suited to expressive, resilient and creative individuals.
+Involves rehearsal, emotional range and stage presence.
+Rewards authenticity and audience engagement.
+Requires adaptability to varied roles and feedback.
+Offers artistic fulfillment and recognition opportunities.
+Matches preference for expressive, people-facing work.
+Appeals to those who thrive in dynamic, performance settings.`,
+
+  Leader: `Guides teams toward shared goals and success.
+Suited to confident, visionary and organized individuals.
+Involves decision-making, communication and motivation.
+Rewards responsibility, trust and consistent effort.
+Requires emotional intelligence and adaptability.
+Offers chances to influence culture and outcomes.
+Matches preference for structure and social leadership.
+Fits those who find fulfillment in guiding others.`,
+
+  HRManager: `Manages employee relations, recruitment and development.
+Suited to empathetic, strategic and people-oriented individuals.
+Involves policy design, performance management and mediation.
+Rewards fairness, listening and clear communication.
+Requires confidentiality and organizational insight.
+Offers opportunities to shape workplace culture.
+Matches preference for structured, people-centered work.
+Fits those who enjoy supporting talent and growth.`,
+
+  ScoutLeader: `Mentors youth through skill-building and community projects.
+Suited to patient, responsible and encouraging personalities.
+Involves teaching teamwork, discipline and leadership.
+Rewards meaningful, long-term developmental impact.
+Requires planning and coordination of group activities.
+Offers community involvement and social contribution.
+Matches preference for mentorship and group engagement.
+Appeals to those passionate about guiding the next generation.`,
+
   Accountant: `Manages financial records, compliance and reporting.
 Suited to methodical, detail-focused and rule-oriented people.
 Involves reconciliations, audits and structured processes.
@@ -209,6 +281,24 @@ Offers exposure to varied business areas and standards.
 Requires skeptical thinking and organized documentation.
 Matches preference for rule-based and systematic tasks.
 Fits those who enjoy ensuring reliability and governance.`,
+
+  PoliceOfficer: `Maintains public safety and enforces laws.
+Suited to disciplined, courageous and observant individuals.
+Involves patrol, investigation and crisis response.
+Rewards integrity, composure and service commitment.
+Requires quick decision-making under pressure.
+Offers opportunities to protect and serve communities.
+Matches preference for structured, impactful work.
+Fits those who value justice and public safety.`,
+
+  Military: `Protects national interests through disciplined service.
+Suited to duty-driven, resilient and structured individuals.
+Involves teamwork, strategy and physical endurance.
+Rewards loyalty, precision and leadership growth.
+Requires discipline and readiness for challenge.
+Offers career paths across technical and strategic roles.
+Matches preference for structured, mission-oriented environments.
+Fits those committed to service and excellence.`,
 
   Nurse: `Provides hands-on care and medical support to patients.
 Suited to empathetic, resilient and practical individuals.
@@ -228,6 +318,87 @@ Offers stable demand and meaningful societal contribution.
 Matches preference for applied science and human impact.
 Fits those committed to long-term professional development.`,
 
+  Librarian: `Organizes and facilitates access to knowledge resources.
+Suited to detail-oriented, organized and service-minded individuals.
+Involves cataloging, research assistance and information literacy.
+Rewards precision, helpfulness and patience.
+Requires strong communication and digital literacy.
+Offers calm, structured work environments.
+Matches preference for order and educational support.
+Fits those who value learning and information sharing.`,
+
+  Administrator: `Coordinates and manages organizational operations.
+Suited to efficient, organized and responsible individuals.
+Involves scheduling, budgeting and records management.
+Rewards reliability, foresight and multitasking.
+Requires communication with staff and leadership.
+Offers structured, predictable workflow and stability.
+Matches preference for process optimization and structure.
+Fits those who enjoy coordination and system management.`,
+
+  ProjectManager: `Oversees planning, execution and delivery of projects.
+Suited to organized, communicative and strategic thinkers.
+Involves coordination of people, timelines and resources.
+Rewards leadership, foresight and accountability.
+Requires multitasking and risk management skills.
+Offers visible outcomes and measurable success metrics.
+Matches preference for structure and organized teamwork.
+Fits those who enjoy turning plans into results.`,
+
+  Banker: `Manages financial assets, lending and investment operations.
+Suited to analytical, disciplined and trustworthy individuals.
+Involves financial advising, credit assessment and transactions.
+Rewards responsibility, ethics and accuracy.
+Offers professional growth and financial acumen.
+Requires regulatory knowledge and communication skills.
+Matches preference for stable, quantitative environments.
+Fits those who value structure and client service.`,
+
+  Judge: `Interprets and applies laws to ensure justice.
+Suited to analytical, impartial and ethical individuals.
+Involves reviewing evidence and delivering fair rulings.
+Rewards patience, reasoning and societal trust.
+Requires legal expertise and strong moral grounding.
+Offers significant social influence and responsibility.
+Matches preference for logic and fairness.
+Fits those who value justice and civic duty.`,
+
+  EventPlanner: `Designs and executes events for clients or organizations.
+Suited to organized, creative and communicative individuals.
+Involves budgeting, coordination and vendor management.
+Rewards attention to detail and problem-solving.
+Requires adaptability under pressure and client focus.
+Offers creative satisfaction and visible results.
+Matches preference for structured yet dynamic work.
+Fits those who enjoy organizing memorable experiences.`,
+
+  Mechanic: `Repairs and maintains mechanical systems and vehicles.
+Suited to hands-on, practical and diagnostic thinkers.
+Involves troubleshooting, maintenance and component testing.
+Rewards precision and mechanical understanding.
+Requires patience and safety awareness.
+Offers job stability and tangible problem-solving.
+Matches preference for practical, result-driven tasks.
+Fits those who enjoy working with tools and systems.`,
+
+  Pilot: `Operates aircraft to transport passengers or cargo.
+Suited to disciplined, focused and calm individuals.
+Involves navigation, communication and systems control.
+Rewards precision, responsibility and situational awareness.
+Requires training, certification and adherence to safety.
+Offers travel opportunities and prestige.
+Matches preference for structured, technical environments.
+Fits those who thrive under pressure and precision.`,
+
+  Detective: `Investigates facts to solve complex, real-world problems.
+Suited to analytical, observant and methodical investigators.
+Involves evidence synthesis, interviewing and deduction.
+Rewards problem-solving under uncertainty and time pressure.
+Requires discretion, resilience and procedural rigor.
+Offers high-impact outcomes for public safety and justice.
+Matches preference for applied investigation and systems thinking.
+Fits those who enjoy piecing disparate clues together.`,
+
   Designer: `Solves problems through user-centered visual and product design.
 Suited to creative, empathetic and iterative thinkers.
 Involves prototyping, user research and aesthetic decisions.
@@ -246,14 +417,50 @@ Offers entrepreneurial and creative career paths.
 Matches preference for craft-oriented, practical work.
 Fits those who take pride in producing sensory experiences.`,
 
-  Detective: `Investigates facts to solve complex, real-world problems.
-Suited to analytical, observant and methodical investigators.
-Involves evidence synthesis, interviewing and deduction.
-Rewards problem-solving under uncertainty and time pressure.
-Requires discretion, resilience and procedural rigor.
-Offers high-impact outcomes for public safety and justice.
-Matches preference for applied investigation and systems thinking.
-Fits those who enjoy piecing disparate clues together.`,
+  Guide: `Leads groups through informative or experiential journeys.
+Suited to outgoing, knowledgeable and patient communicators.
+Involves storytelling, logistics coordination and safety.
+Rewards enthusiasm, reliability and people skills.
+Requires adaptability to varied audiences and conditions.
+Offers travel, cultural exchange and interpersonal engagement.
+Matches preference for dynamic, people-centered work.
+Fits those who enjoy educating and inspiring others.`,
+
+  EventCoordinator: `Plans and manages logistics for gatherings and events.
+Suited to organized, detail-oriented and adaptable individuals.
+Involves scheduling, budgeting and team coordination.
+Rewards multitasking, problem-solving and creativity.
+Requires calmness under pressure and client focus.
+Offers visible, rewarding outcomes through collaboration.
+Matches preference for dynamic, structured work.
+Fits those who enjoy managing experiences and details.`,
+
+  FitnessTrainer: `Helps clients achieve health and performance goals.
+Suited to motivational, disciplined and interpersonal people.
+Involves program design, coaching and measurable progress.
+Rewards direct client outcomes and visible results.
+Requires empathy, teaching ability and consistency.
+Offers flexible scheduling and entrepreneurial opportunities.
+Matches preference for active, people-facing work.
+Fits those who enjoy coaching and physical wellbeing.`,
+
+  Paramedic: `Responds to urgent medical situations with rapid care.
+Suited to calm, decisive and technical responders.
+Involves on-site triage, stabilization and teamwork.
+Rewards saving lives and immediate clinical impact.
+Requires physical stamina and high stress tolerance.
+Offers meaningful, public-service oriented work.
+Matches preference for action, quick judgment and hands-on care.
+Fits those who perform reliably under pressure.`,
+
+  PhysicalTherapist: `Provides rehabilitation and mobility improvement through therapeutic exercise.
+Suited to hands-on, practical and patient-focused practitioners.
+Involves assessment, treatment planning and progress tracking.
+Rewards observing measurable recovery and functional gains.
+Requires strong anatomy knowledge and manual therapy skills.
+Involves frequent patient communication and care coordination.
+Offers varied settings: hospitals, clinics, sports and community care.
+Matches preference for applied healthcare and problem-solving.`,
 
   Sales: `Builds relationships and persuades stakeholders to act.
 Suited to confident, goal-driven and resilient communicators.
@@ -272,33 +479,6 @@ Requires stamina, adaptability and audience awareness.
 Offers variable career paths across media and live venues.
 Matches preference for public-facing creative work.
 Fits those who thrive on performance energy and presence.`,
-
-  Paramedic: `Responds to urgent medical situations with rapid care.
-Suited to calm, decisive and technical responders.
-Involves on-site triage, stabilization and teamwork.
-Rewards saving lives and immediate clinical impact.
-Requires physical stamina and high stress tolerance.
-Offers meaningful, public-service oriented work.
-Matches preference for action, quick judgment and hands-on care.
-Fits those who perform reliably under pressure.`,
-
-  FitnessTrainer: `Helps clients achieve health and performance goals.
-Suited to motivational, disciplined and interpersonal people.
-Involves program design, coaching and measurable progress.
-Rewards direct client outcomes and visible results.
-Requires empathy, teaching ability and consistency.
-Offers flexible scheduling and entrepreneurial opportunities.
-Matches preference for active, people-facing work.
-Fits those who enjoy coaching and physical wellbeing.`,
-
-  PhysicalTherapist: `Provides rehabilitation and mobility improvement through therapeutic exercise.
-Suited to hands-on, practical and patient-focused practitioners.
-Involves assessment, treatment planning and progress tracking.
-Rewards observing measurable recovery and functional gains.
-Requires strong anatomy knowledge and manual therapy skills.
-Involves frequent patient communication and care coordination.
-Offers varied settings: hospitals, clinics, sports and community care.
-Matches preference for applied healthcare and problem-solving.`,
 };
 
 export default function SuitableCareers() {
@@ -343,11 +523,8 @@ export default function SuitableCareers() {
             careers.map((career) => (
               <div key={career} style={{ background: "#f8fafc", padding: 12, borderRadius: 8, marginBottom: 12 }}>
                 <h4 style={{ margin: 0 }}>{career}</h4>
-                <p style={{ marginTop: 6, color: "#374151" }}>
-                  {careerDetails[career] || "This career matches core strengths detected in your profile."}
-                </p>
-                <p style={{ marginTop: 6, color: "#6b7280", fontSize: 13 }}>
-                  This suggestion matches the dominant traits detected in your assessment.
+                <p style={{ marginTop: 6, color: "#374151", whiteSpace: "pre-line" }}>
+                  {careerDetails[career.replace(/\s+/g, '')] || "This career matches core strengths detected in your profile."}
                 </p>
               </div>
             ))
@@ -361,7 +538,7 @@ export default function SuitableCareers() {
         </div>
       </main>
 
-      <footer style={styles.footer}>© {new Date().getFullYear()} AI Career Counsellor</footer>
+      <footer style={styles.footer}> {new Date().getFullYear()} AI Career Counsellor</footer>
     </div>
   );
 }
@@ -414,6 +591,22 @@ const styles = {
   },
   primary: {
     background: "#0b5ed7",
+    color: "#fff",
+    border: "none",
+    padding: "10px 16px",
+    borderRadius: 8,
+    cursor: "pointer",
+  },
+  pdfBtn: {
+    background: "#10b981",
+    color: "#fff",
+    border: "none",
+    padding: "10px 16px",
+    borderRadius: 8,
+    cursor: "pointer",
+  },
+  printBtn: {
+    background: "#f59e0b",
     color: "#fff",
     border: "none",
     padding: "10px 16px",

@@ -6,6 +6,7 @@ import { auth } from "../firebase";
 
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [selectedStage, setSelectedStage] = useState(2); // Pre-select option 3 (index 2)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,8 +60,43 @@ export default function Home() {
             </div>
           </div>
 
+          <div style={styles.stageCard}>
+            <h3 style={styles.stageTitle}>🎯 Define Your Current Stage</h3>
+            <p style={styles.stageSubtitle}>Help us understand where you are in your career journey</p>
+            <div style={styles.stageGrid}>
+              <StageOption
+                icon="❓"
+                title="No Idea"
+                description="I have no idea about my career"
+                isSelected={selectedStage === 0}
+                onClick={() => setSelectedStage(0)}
+              />
+              <StageOption
+                icon="🛣️"
+                title="Confused"
+                description="I am confused among various career options"
+                isSelected={selectedStage === 1}
+                onClick={() => setSelectedStage(1)}
+              />
+              <StageOption
+                icon="🔭"
+                title="Exploring"
+                description="I am bit sure but want to explore other options as well"
+                isSelected={selectedStage === 2}
+                onClick={() => setSelectedStage(2)}
+              />
+              <StageOption
+                icon="🗺️"
+                title="Need Plan"
+                description="I am very sure about my career choice but need an execution plan"
+                isSelected={selectedStage === 3}
+                onClick={() => setSelectedStage(3)}
+              />
+            </div>
+          </div>
+
           <div style={styles.infoCard}>
-            <h3 style={{ marginTop: 0 }}>How it works</h3>
+            <h3 style={styles.infoTitle}>📋 How It Works</h3>
             <ol style={{ paddingLeft: 18 }}>
               <li>Complete a short personality & interest assessment (5–7 mins).</li>
               <li>Get prioritized career matches with explanations.</li>
@@ -90,7 +126,7 @@ export default function Home() {
       </main>
 
       <footer style={styles.footer}>
-        <div>© {new Date().getFullYear()} AI Career Counsellor</div>
+        <div> 2023 AI Career Counsellor</div>
       </footer>
     </div>
   );
@@ -101,6 +137,74 @@ function Feature({ title, desc }) {
     <div style={{ marginBottom: 10 }}>
       <strong>{title}</strong>
       <div style={{ color: "#4b5563" }}>{desc}</div>
+    </div>
+  );
+}
+
+function StageOption({ icon, title, description, isSelected, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        padding: 20,
+        background: isSelected ? "linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%)" : "#fff",
+        borderRadius: 12,
+        border: isSelected ? "2px solid #6366f1" : "2px solid #e2e8f0",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        textAlign: "center",
+        position: "relative",
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.borderColor = "#cbd5e1";
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 8px 20px rgba(99,102,241,0.08)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.borderColor = "#e2e8f0";
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "none";
+        }
+      }}
+    >
+      {isSelected && (
+        <div style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: "#6366f1",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          fontSize: 12,
+          fontWeight: 700,
+        }}>
+          ✓
+        </div>
+      )}
+      <div style={{ fontSize: 32, marginBottom: 12 }}>{icon}</div>
+      <div style={{ 
+        fontWeight: 600, 
+        fontSize: 15, 
+        color: isSelected ? "#4338ca" : "#0f172a",
+        marginBottom: 8,
+      }}>
+        {title}
+      </div>
+      <div style={{ 
+        fontSize: 13, 
+        color: isSelected ? "#6366f1" : "#64748b",
+        lineHeight: 1.4,
+      }}>
+        {description}
+      </div>
     </div>
   );
 }
@@ -155,30 +259,139 @@ const styles = {
   right: { width: 320, display: "flex", flexDirection: "column", gap: 14 },
 
   heroCard: {
-    background: "#fff",
-    borderRadius: 12,
-    padding: 24,
-    boxShadow: "0 12px 30px rgba(15,23,42,0.06)",
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    borderRadius: 16,
+    padding: 32,
+    boxShadow: "0 20px 40px rgba(15,23,42,0.08)",
+    border: "1px solid #e2e8f0",
   },
-  h1: { fontSize: 28, margin: 0, color: "#0b3a66" },
-  lead: { marginTop: 12, color: "#374151" },
-  ctaRow: { display: "flex", gap: 12, marginTop: 18, flexWrap: "wrap" },
+  badge: {
+    display: "inline-block",
+    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+    color: "#fff",
+    padding: "6px 14px",
+    borderRadius: 20,
+    fontSize: 13,
+    fontWeight: 600,
+    marginBottom: 16,
+    boxShadow: "0 4px 12px rgba(99,102,241,0.2)",
+  },
+  h1: { 
+    fontSize: 36, 
+    margin: "8px 0 0 0", 
+    color: "#0f172a",
+    fontWeight: 800,
+    lineHeight: 1.2,
+  },
+  lead: { 
+    marginTop: 16, 
+    color: "#475569",
+    fontSize: 16,
+    lineHeight: 1.6,
+  },
+  ctaRow: { display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" },
   primaryBtn: {
-    background: "#0b5ed7",
+    background: "linear-gradient(135deg, #0b5ed7 0%, #0ea5e9 100%)",
     color: "#fff",
     border: "none",
-    padding: "10px 16px",
-    borderRadius: 8,
+    padding: "12px 24px",
+    borderRadius: 10,
     cursor: "pointer",
     fontWeight: 600,
+    fontSize: 15,
+    boxShadow: "0 4px 14px rgba(11,94,215,0.3)",
+    transition: "all 0.3s ease",
   },
-  features: { marginTop: 18, display: "grid", gap: 8 },
+  secondaryBtn: {
+    background: "#fff",
+    color: "#0b5ed7",
+    border: "2px solid #e2e8f0",
+    padding: "12px 24px",
+    borderRadius: 10,
+    cursor: "pointer",
+    fontWeight: 600,
+    fontSize: 15,
+    transition: "all 0.3s ease",
+  },
+  features: { marginTop: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 },
+
+  stageCard: {
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    borderRadius: 16,
+    padding: 32,
+    boxShadow: "0 20px 40px rgba(15,23,42,0.08)",
+    border: "1px solid #e2e8f0",
+  },
+  stageTitle: {
+    marginTop: 0,
+    marginBottom: 8,
+    fontSize: 24,
+    fontWeight: 700,
+    color: "#0f172a",
+  },
+  stageSubtitle: {
+    marginTop: 0,
+    marginBottom: 24,
+    fontSize: 15,
+    color: "#64748b",
+  },
+  stageGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: 16,
+  },
 
   infoCard: {
     background: "#fff",
+    borderRadius: 16,
+    padding: 28,
+    boxShadow: "0 12px 30px rgba(15,23,42,0.06)",
+    border: "1px solid #e2e8f0",
+  },
+  infoTitle: {
+    marginTop: 0,
+    marginBottom: 20,
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#0f172a",
+  },
+  stepContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  },
+  step: {
+    display: "flex",
+    gap: 16,
+    alignItems: "flex-start",
+    padding: 16,
+    background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
     borderRadius: 12,
-    padding: 20,
-    boxShadow: "0 8px 20px rgba(15,23,42,0.04)",
+    border: "1px solid #e2e8f0",
+  },
+  stepNumber: {
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 700,
+    fontSize: 16,
+    flexShrink: 0,
+  },
+  stepTitle: {
+    fontWeight: 600,
+    fontSize: 15,
+    color: "#0f172a",
+    marginBottom: 4,
+  },
+  stepDesc: {
+    fontSize: 14,
+    color: "#64748b",
+    lineHeight: 1.5,
   },
 
   profileCard: {
@@ -195,28 +408,85 @@ const styles = {
   email: { fontSize: 13, color: "#6b7280" },
 
   cardStat: {
-    background: "#fff",
-    padding: 14,
-    borderRadius: 12,
-    boxShadow: "0 8px 20px rgba(15,23,42,0.04)",
-    textAlign: "left",
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    padding: 20,
+    borderRadius: 16,
+    boxShadow: "0 12px 30px rgba(15,23,42,0.06)",
+    textAlign: "center",
+    border: "1px solid #e2e8f0",
+  },
+  statIcon: {
+    fontSize: 32,
+    marginBottom: 12,
+  },
+  statTitle: {
+    display: "block",
+    fontSize: 16,
+    color: "#0f172a",
+    marginBottom: 8,
+  },
+  statDesc: {
+    margin: "8px 0 16px 0",
+    fontSize: 14,
+    color: "#64748b",
+    lineHeight: 1.5,
   },
 
   smallBtn: {
     marginTop: 8,
-    background: "#06b6d4",
+    background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
     color: "#fff",
     border: "none",
-    padding: "8px 12px",
-    borderRadius: 8,
+    padding: "10px 16px",
+    borderRadius: 10,
     cursor: "pointer",
+    fontWeight: 600,
+    width: "100%",
+    boxShadow: "0 4px 12px rgba(6,182,212,0.3)",
+    transition: "all 0.3s ease",
+  },
+
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 12,
+  },
+  miniStat: {
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    padding: 16,
+    borderRadius: 12,
+    textAlign: "center",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 4px 12px rgba(15,23,42,0.04)",
+  },
+  miniStatValue: {
+    fontSize: 24,
+    fontWeight: 700,
+    color: "#6366f1",
+    marginBottom: 4,
+  },
+  miniStatLabel: {
+    fontSize: 12,
+    color: "#64748b",
+    fontWeight: 500,
   },
 
   footer: {
     textAlign: "center",
-    padding: 18,
-    color: "#6b7280",
+    padding: 24,
+    color: "#94a3b8",
     marginTop: "auto",
+    borderTop: "1px solid #e2e8f0",
+  },
+  footerContent: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    fontSize: 14,
+  },
+  footerDivider: {
+    color: "#cbd5e1",
   },
 };
 // ...existing code...
