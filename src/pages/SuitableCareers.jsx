@@ -700,7 +700,7 @@ export default function SuitableCareers() {
         </div>
       </main>
 
-      <footer style={styles.footer}> {new Date().getFullYear()} AI Career Counsellor</footer>
+      <footer style={styles.footer}>© {new Date().getFullYear()} AI Career Counsellor</footer>
     </div>
   );
 }

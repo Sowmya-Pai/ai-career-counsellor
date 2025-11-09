@@ -35,7 +35,7 @@ export default function Login() {
       <header style={styles.header}>
         <div style={styles.brand}>
           <div style={styles.logo}>AI</div>
-          <span style={styles.title}>AI Career Counsellor</span>
+          <span style={styles.title}>AI Career Compass</span>
         </div>
         <nav style={styles.nav}>
           <button onClick={() => window.scrollTo({ top: 400, behavior: "smooth" })} style={styles.link}>About</button>
@@ -86,7 +86,7 @@ export default function Login() {
       </main>
 
       <footer style={styles.footer}>
-        <small>© {new Date().getFullYear()} AI Career Counsellor — Built with Firebase & React</small>
+        <small>© {new Date().getFullYear()} AI Career Compass — Powered by Who You Are.</small>
       </footer>
     </div>
   );

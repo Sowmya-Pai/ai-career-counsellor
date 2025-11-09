@@ -29,7 +29,7 @@ export default function Home() {
         <div style={styles.brand}>
           <div style={styles.logo}>AI</div>
           <div>
-            <div style={styles.appName}>AI Career Counsellor</div>
+            <div style={styles.appName}>AI Career Compass</div>
             <div style={styles.appTag}>Personalized career guidance</div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function Home() {
       </main>
 
       <footer style={styles.footer}>
-        <div>© {new Date().getFullYear()} AI Career Counsellor</div>
+        <div>© {new Date().getFullYear()} AI Career Compass</div>
       </footer>
     </div>
   );
