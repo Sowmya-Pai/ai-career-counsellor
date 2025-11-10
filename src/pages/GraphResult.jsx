@@ -1,13 +1,14 @@
 import React, { useMemo, useState, useRef } from "react";
 import html2canvas from "html2canvas";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../theme/ThemeContext";
 
 /*
   Updated PieChart: enlarge SVG canvas with margins so outside labels (taglines)
   and leader lines are not clipped. Legend remains one-line per item.
 */
 
-export function PieChart({ data = [], size = 360, title }) {
+export function PieChart({ data = [], size = 360, title, isDark = false }) {
   const [hovered, setHovered] = useState(null);
 
   // Increased margin for better spacing
@@ -45,8 +46,32 @@ export function PieChart({ data = [], size = 360, title }) {
     return { ...d, path, mid, labelX, labelY, percent, i };
   });
 
+  // Resolve label collisions: adjust labelY positions per side (left/right) with a minimum gap
+  const minGap = 16;
+  const adjustedYByIndex = new Map();
+  // Left side (labelX < cx)
+  const left = [...slices].filter(s => s.labelX < cx).sort((a, b) => a.labelY - b.labelY);
+  let lastYLeft = -Infinity;
+  left.forEach((s) => {
+    const proposed = Math.max(s.labelY, lastYLeft + minGap);
+    adjustedYByIndex.set(s.i, proposed);
+    lastYLeft = proposed;
+  });
+  // Right side (labelX >= cx)
+  const right = [...slices].filter(s => s.labelX >= cx).sort((a, b) => a.labelY - b.labelY);
+  let lastYRight = -Infinity;
+  right.forEach((s) => {
+    const proposed = Math.max(s.labelY, lastYRight + minGap);
+    adjustedYByIndex.set(s.i, proposed);
+    lastYRight = proposed;
+  });
+
+  const textColor = isDark ? "#e2e8f0" : "#111827";
+  const subTextColor = isDark ? "#cbd5f5" : "#6b7280";
+  const legendBg = isDark ? "rgba(15,23,42,0.75)" : "#f8fafc";
+
   return (
-    <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
+    <div style={{ display: "flex", gap: 32, alignItems: "flex-start", color: textColor }}>
       {/* Pie Chart */}
       <svg
         width={svgSize}
@@ -55,7 +80,7 @@ export function PieChart({ data = [], size = 360, title }) {
         style={{ overflow: "visible" }}
       >
         {title && (
-          <text x={cx} y={40} textAnchor="middle" fontSize={16} fontWeight={700} fill="#111827">
+          <text x={cx} y={40} textAnchor="middle" fontSize={16} fontWeight={700} fill={textColor}>
             {title}
           </text>
         )}
@@ -82,16 +107,16 @@ export function PieChart({ data = [], size = 360, title }) {
                 x1={cx + r * Math.cos(s.mid)}
                 y1={cy + r * Math.sin(s.mid)}
                 x2={s.labelX}
-                y2={s.labelY}
+                y2={adjustedYByIndex.get(s.i) ?? s.labelY}
                 stroke="#9ca3af"
                 strokeWidth="1"
               />
               <text
                 x={s.labelX}
-                y={s.labelY}
+                y={adjustedYByIndex.get(s.i) ?? s.labelY}
                 textAnchor={s.labelX < cx ? "end" : "start"}
                 fontSize={12}
-                fill={hovered === s.i ? "#0b1724" : "#374151"}
+                fill={hovered === s.i ? (isDark ? "#f8fafc" : "#0b1724") : (isDark ? "#e2e8f0" : "#374151")}
                 fontWeight={hovered === s.i ? 600 : 500}
                 dy="0.3em"
               >
@@ -103,17 +128,17 @@ export function PieChart({ data = [], size = 360, title }) {
 
         {/* Center circle */}
         <circle cx={cx} cy={cy} r={r * 0.36} fill="#fff" stroke="rgba(15,23,42,0.04)" />
-        <text x={cx} y={cy} textAnchor="middle" fontSize={13} fill="#6b7280" dy="-0.5em">
+        <text x={cx} y={cy} textAnchor="middle" fontSize={13} fill={subTextColor} dy="-0.5em">
           Total traits:
         </text>
-        <text x={cx} y={cy} textAnchor="middle" fontSize={16} fill="#0b5ed7" dy="1em" fontWeight={600}>
+        <text x={cx} y={cy} textAnchor="middle" fontSize={16} fill={isDark ? "#38bdf8" : "#0b5ed7"} dy="1em" fontWeight={600}>
           {slices.length}
         </text>
       </svg>
 
       {/* Legend with detailed descriptions */}
       <div style={{ minWidth: 300, maxWidth: 360 }}>
-        <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: "#111827" }}>
+        <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: textColor }}>
           Trait Details
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -125,19 +150,19 @@ export function PieChart({ data = [], size = 360, title }) {
                 gap: 12, 
                 padding: "10px 12px", 
                 borderRadius: 8, 
-                background: "#f8fafc",
+                background: legendBg,
                 borderLeft: `3px solid ${d.color}`
               }}
             >
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 500, color: "#111827" }}>
+                <div style={{ fontSize: 14, fontWeight: 500, color: textColor }}>
                   {d.label}
                 </div>
-                <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>
+                <div style={{ fontSize: 13, color: subTextColor, marginTop: 2 }}>
                   {d.tagline}
                 </div>
               </div>
-              <div style={{ fontSize: 13, color: "#374151", fontWeight: 500 }}>
+              <div style={{ fontSize: 13, color: textColor, fontWeight: 500 }}>
                 {((d.value / Math.max(1, data.reduce((s, x) => s + Math.max(0, x.value), 0))) * 100).toFixed(1)}%
               </div>
             </div>
@@ -151,6 +176,7 @@ export function PieChart({ data = [], size = 360, title }) {
 export default function GraphResult() {
   const navigate = useNavigate();
   const reportRef = useRef(null);
+  const { isDark } = useTheme();
   const personalityData = JSON.parse(localStorage.getItem("personalityTraits") || "{}");
   const interestData = JSON.parse(localStorage.getItem("interestTraits") || "{}");
 
@@ -405,30 +431,87 @@ export default function GraphResult() {
   }
 
 
+  const pageBackground = isDark
+    ? "linear-gradient(135deg, rgba(2,6,23,0.92), rgba(30,58,138,0.85)), url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1800&q=70')"
+    : "linear-gradient(135deg, rgba(226,232,240,0.92), rgba(191,219,254,0.85)), url('https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=1800&q=70')";
+
+  const cardStyle = {
+    ...styles.card,
+    background: isDark ? "rgba(15,23,42,0.9)" : "rgba(255,255,255,0.96)",
+    border: isDark ? "1px solid rgba(148,163,184,0.18)" : "1px solid rgba(226,232,240,0.9)",
+    boxShadow: isDark ? "0 22px 50px rgba(8,15,40,0.6)" : "0 24px 48px rgba(15,23,42,0.15)",
+    color: isDark ? "#f8fafc" : "#0f172a",
+    backdropFilter: "blur(10px)"
+  };
+
+  const legendSectionStyle = {
+    background: isDark ? "rgba(15,23,42,0.6)" : "#f8fafc",
+    border: isDark ? "1px solid rgba(148,163,184,0.25)" : "1px solid #e2e8f0"
+  };
+
+  const legendItemStyle = {
+    ...styles.legendItem,
+    background: isDark ? "rgba(15,23,42,0.75)" : "#fff",
+    color: isDark ? "#e2e8f0" : "#0f172a",
+    boxShadow: isDark ? "0 12px 22px rgba(8,15,40,0.35)" : "0 8px 16px rgba(15,23,42,0.08)"
+  };
+
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
+    <div
+      style={{
+        ...styles.page,
+        background: pageBackground,
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        color: isDark ? "#f8fafc" : "#0f172a"
+      }}
+    >
+      <header style={{
+        ...styles.header,
+        background: isDark ? "rgba(15,23,42,0.75)" : "rgba(255,255,255,0.92)",
+        borderBottom: isDark ? "1px solid rgba(148,163,184,0.3)" : "1px solid rgba(226,232,240,0.85)",
+        backdropFilter: "blur(12px)"
+      }}>
         <div style={styles.brand}>
           <div style={styles.logo}>AI</div>
           <div>
-            <div style={styles.title}>Assessment Results</div>
-            <div style={styles.subtitle}>Personality & interests</div>
+            <div style={{ ...styles.title, color: isDark ? "#f8fafc" : styles.title.color }}>Assessment Results</div>
+            <div style={{ ...styles.subtitle, color: isDark ? "#cbd5f5" : "#6b7280" }}>Personality & interests</div>
           </div>
         </div>
+        <button
+          style={{
+            ...styles.homeButton,
+            background: isDark ? "linear-gradient(135deg,#38bdf8,#6366f1)" : styles.homeButton.background,
+            boxShadow: isDark ? "0 12px 26px rgba(59,130,246,0.35)" : "0 10px 22px rgba(11,94,215,0.25)"
+          }}
+          onClick={() => navigate("/home")}
+        >
+          Home
+        </button>
       </header>
 
-      <main style={styles.container}>
-  <div ref={reportRef} style={styles.card}>
+      <main style={{ ...styles.container, alignItems: "stretch" }}>
+  <div ref={reportRef} style={cardStyle}>
           <div style={styles.topRow}>
             <div>
-              <h2 style={{ margin: 0 }}>Your Complete Profile</h2>
-              <div style={{ color: "#0b5ed7", marginTop: 6 }}>MBTI: {getMBTI()}</div>
+              <h2 style={{ margin: 0, color: isDark ? "#f8fafc" : "#0f172a" }}>Your Complete Profile</h2>
+              <div style={{ color: isDark ? "#38bdf8" : "#0b5ed7", marginTop: 6 }}>MBTI: {getMBTI()}</div>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => navigate("/assessment/suitable-careers")} style={styles.smallBtn}>Recommended</button>
-              <button onClick={() => navigate("/assessment/not-recommended")} style={styles.smallBtnGhost}>Avoid</button>
-              <button data-skip-pdf onClick={downloadPDF} style={styles.smallBtnPrint}>Download PDF</button>
-              <button onClick={handleRestart} style={styles.smallBtnAlt}>Retake</button>
+              <button onClick={() => navigate("/assessment/suitable-careers")} style={{ ...styles.smallBtn, background: isDark ? "linear-gradient(135deg,#22c55e,#4ade80)" : styles.smallBtn.background }}>
+                Recommended
+              </button>
+              <button onClick={() => navigate("/assessment/not-recommended")} style={{ ...styles.smallBtnGhost, background: isDark ? "rgba(15,23,42,0.75)" : "#fff", color: isDark ? "#e2e8f0" : "#374151", border: isDark ? "1px solid rgba(148,163,184,0.35)" : styles.smallBtnGhost.border }}>
+                Avoid
+              </button>
+              <button data-skip-pdf onClick={downloadPDF} style={{ ...styles.smallBtnPrint, background: isDark ? "linear-gradient(135deg,#f59e0b,#f97316)" : styles.smallBtnPrint.background }}>
+                Download PDF
+              </button>
+              <button onClick={handleRestart} style={{ ...styles.smallBtnAlt, background: isDark ? "linear-gradient(135deg,#6366f1,#8b5cf6)" : styles.smallBtnAlt.background }}>
+                Retake
+              </button>
             </div>
           </div>
 
@@ -436,39 +519,40 @@ export default function GraphResult() {
             <PieChart 
               data={allTraits} 
               size={720}
-              title="Complete Profile Analysis (16 Traits)" 
+              title="Complete Profile Analysis (16 Traits)"
+              isDark={isDark}
             />
           </div>
 
           <div style={styles.legendContainer}>
-            <div style={styles.legendSection}>
-              <h3 style={styles.legendTitle}>
+            <div style={{ ...styles.legendSection, ...legendSectionStyle }}>
+              <h3 style={{ ...styles.legendTitle, color: isDark ? "#f8fafc" : "#111827" }}>
                 Personality Traits (MBTI Based)
               </h3>
               <div style={styles.legendGrid}>
                 {allTraits.slice(0, 8).map((trait, idx) => (
-                  <div key={trait.label} style={styles.legendItem}>
+                  <div key={trait.label} style={legendItemStyle}>
                     <span style={{...styles.legendColor, backgroundColor: trait.color}} />
                     <div style={styles.legendText}>
-                      <strong>{trait.label}</strong>
-                      <span style={styles.legendTagline}>{trait.tagline}</span>
+                      <strong style={{ color: isDark ? "#f8fafc" : "#111827" }}>{trait.label}</strong>
+                      <span style={{ ...styles.legendTagline, color: isDark ? "#cbd5f5" : "#6b7280" }}>{trait.tagline}</span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={styles.legendSection}>
-              <h3 style={styles.legendTitle}>
+            <div style={{ ...styles.legendSection, ...legendSectionStyle }}>
+              <h3 style={{ ...styles.legendTitle, color: isDark ? "#f8fafc" : "#111827" }}>
                 Interest Traits (8 Categories)
               </h3>
               <div style={styles.legendGrid}>
                 {allTraits.slice(8).map((trait, idx) => (
-                  <div key={trait.label} style={styles.legendItem}>
+                  <div key={trait.label} style={legendItemStyle}>
                     <span style={{...styles.legendColor, backgroundColor: trait.color}} />
                     <div style={styles.legendText}>
-                      <strong>{trait.label}</strong>
-                      <span style={styles.legendTagline}>{trait.tagline}</span>
+                      <strong style={{ color: isDark ? "#f8fafc" : "#111827" }}>{trait.label}</strong>
+                      <span style={{ ...styles.legendTagline, color: isDark ? "#cbd5f5" : "#6b7280" }}>{trait.tagline}</span>
                     </div>
                   </div>
                 ))}
@@ -484,7 +568,7 @@ export default function GraphResult() {
 // Updated styles
 const styles = {
   page: { fontFamily: "Inter, system-ui, Arial", minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f6f9ff" },
-  header: { display: "flex", alignItems: "center", padding: "18px 28px", background: "#fff", borderBottom: "1px solid #e6eef9" },
+  header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 28px", background: "#fff", borderBottom: "1px solid #e6eef9" },
   brand: { display: "flex", gap: 12, alignItems: "center" },
   logo: { width: 44, height: 44, borderRadius: 10, background: "linear-gradient(135deg,#6c63ff,#00c2ff)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 },
   title: { fontWeight: 700 },
@@ -497,6 +581,7 @@ const styles = {
   smallBtnReport: { background: "#10b981", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
   smallBtnPrint: { background: "#f59e0b", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
   smallBtnAlt: { background: "#6c63ff", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 8, cursor: "pointer" },
+  homeButton: { background: "#0b5ed7", color: "#fff", border: "none", padding: "10px 16px", borderRadius: 8, cursor: "pointer", fontWeight: 600, transition: "background 0.2s ease" },
 
   // ✅ UPDATED TO STACK CHARTS VERTICALLY
   twoColumn: {

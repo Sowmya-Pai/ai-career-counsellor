@@ -1,12 +1,14 @@
 // ...existing code...
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function Home() {
+  const { isDark } = useTheme();
   const [user, setUser] = useState(null);
-  const [selectedStage, setSelectedStage] = useState(2); // Pre-select option 3 (index 2)
+  const [selectedStage, setSelectedStage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,29 +25,57 @@ export default function Home() {
     navigate("/", { replace: true });
   };
 
+  const stageOptions = useMemo(() => [
+    { icon: "❓", title: "No Idea", description: "I have no idea about my career" },
+    { icon: "🛣️", title: "Confused", description: "I am confused among various career options" },
+    { icon: "🔭", title: "Exploring", description: "I am bit sure but want to explore other options as well" },
+    { icon: "🗺️", title: "Need Plan", description: "I am very sure about my career choice but need an execution plan" },
+  ], []);
+
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
+    <div style={{
+      ...styles.page,
+      background: isDark
+        ? "linear-gradient(135deg, rgba(2,6,23,0.94), rgba(30,58,138,0.85)), url('https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=1800&q=70')"
+        : "linear-gradient(135deg, rgba(226,232,240,0.92), rgba(191,219,254,0.8)), url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1800&q=70')",
+      backgroundSize: "cover",
+      backgroundAttachment: "fixed",
+      backgroundPosition: "center",
+      color: isDark ? "#e2e8f0" : "#0f172a"
+    }}>
+      <header style={{
+        ...styles.header,
+        background: isDark ? "#0b1220" : "#ffffff",
+        borderBottom: isDark ? "1px solid rgba(148, 163, 184, 0.2)" : "1px solid #e6eef9"
+      }}>
         <div style={styles.brand}>
-          <div style={styles.logo}>AI</div>
+          <div style={{
+            ...styles.logo,
+            boxShadow: isDark ? "0 6px 18px rgba(99,102,241,0.35)" : styles.logo.boxShadow
+          }}>AI</div>
           <div>
-            <div style={styles.appName}>AI Career Compass</div>
-            <div style={styles.appTag}>Personalized career guidance</div>
+            <div style={{ ...styles.appName, color: isDark ? "#f8fafc" : styles.appName.color }}>AI Career Compass</div>
+            <div style={{ ...styles.appTag, color: isDark ? "#94a3b8" : "#6b7280" }}>Personalized career guidance</div>
           </div>
         </div>
 
         <nav style={styles.nav}>
-          <button style={styles.navBtn} onClick={() => navigate("/home")}>Dashboard</button>
-          <button style={styles.navBtn} onClick={() => window.scrollTo({ top: 600, behavior: "smooth" })}>About</button>
+          <button style={{ ...styles.navBtn, color: isDark ? "#e2e8f0" : "#374151" }} onClick={() => navigate("/home")}>Dashboard</button>
+          <button style={{ ...styles.navBtn, color: isDark ? "#e2e8f0" : "#374151" }} onClick={() => window.scrollTo({ top: 600, behavior: "smooth" })}>About</button>
           <button style={styles.signOut} onClick={handleSignOut}>Sign out</button>
         </nav>
       </header>
 
       <main style={styles.main}>
         <section style={styles.left}>
-          <div style={styles.heroCard}>
-            <h1 style={styles.h1}>Find the best career path for you</h1>
-            <p style={styles.lead}>
+          <div style={{
+            ...styles.heroCard,
+            background: isDark ? "linear-gradient(135deg, rgba(15,23,42,0.85), rgba(37,99,235,0.65))" : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+            border: isDark ? "1px solid rgba(148,163,184,0.18)" : "1px solid #e2e8f0",
+            color: isDark ? "#f8fafc" : "#0f172a",
+          }}>
+            <h1 style={{ ...styles.h1, color: isDark ? "#f8fafc" : "#0f172a" }}>Find the best career path for you</h1>
+            <p style={{ ...styles.lead, color: isDark ? "#cbd5f5" : "#475569" }}>
               Take a short assessment and receive tailored career suggestions, learning resources, and step-by-step plans to reach your goals.
             </p>
 
@@ -54,50 +84,43 @@ export default function Home() {
             </div>
 
             <div style={styles.features}>
-              <Feature title="Personalized" desc="AI-driven recommendations based on your responses." />
-              <Feature title="Save Progress" desc="Sign in to continue later across devices." />
-              <Feature title="Actionable Steps" desc="Clear next steps and learning paths." />
+              <Feature title="Personalized" desc="AI-driven recommendations based on your responses." isDark={isDark} />
+              <Feature title="Save Progress" desc="Sign in to continue later across devices." isDark={isDark} />
+              <Feature title="Actionable Steps" desc="Clear next steps and learning paths." isDark={isDark} />
             </div>
           </div>
 
-          <div style={styles.stageCard}>
-            <h3 style={styles.stageTitle}>🎯 Define Your Current Stage</h3>
-            <p style={styles.stageSubtitle}>Help us understand where you are in your career journey</p>
+          <div style={{
+            ...styles.stageCard,
+            background: isDark ? "rgba(15,23,42,0.85)" : "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+            border: isDark ? "1px solid rgba(148,163,184,0.18)" : "1px solid #e2e8f0",
+            color: isDark ? "#f8fafc" : "#0f172a"
+          }}>
+            <h3 style={{ ...styles.stageTitle, color: isDark ? "#f1f5f9" : "#0f172a" }}>🎯 Define Your Current Stage</h3>
+            <p style={{ ...styles.stageSubtitle, color: isDark ? "#cbd5f5" : "#64748b" }}>Help us understand where you are in your career journey</p>
             <div style={styles.stageGrid}>
-              <StageOption
-                icon="❓"
-                title="No Idea"
-                description="I have no idea about my career"
-                isSelected={selectedStage === 0}
-                onClick={() => setSelectedStage(0)}
-              />
-              <StageOption
-                icon="🛣️"
-                title="Confused"
-                description="I am confused among various career options"
-                isSelected={selectedStage === 1}
-                onClick={() => setSelectedStage(1)}
-              />
-              <StageOption
-                icon="🔭"
-                title="Exploring"
-                description="I am bit sure but want to explore other options as well"
-                isSelected={selectedStage === 2}
-                onClick={() => setSelectedStage(2)}
-              />
-              <StageOption
-                icon="🗺️"
-                title="Need Plan"
-                description="I am very sure about my career choice but need an execution plan"
-                isSelected={selectedStage === 3}
-                onClick={() => setSelectedStage(3)}
-              />
+              {stageOptions.map((option, idx) => (
+                <StageOption
+                  key={option.title}
+                  icon={option.icon}
+                  title={option.title}
+                  description={option.description}
+                  isDark={isDark}
+                  isActive={selectedStage === idx}
+                  onClick={() => setSelectedStage(idx)}
+                />
+              ))}
             </div>
           </div>
 
-          <div style={styles.infoCard}>
-            <h3 style={styles.infoTitle}>📋 How It Works</h3>
-            <ol style={{ paddingLeft: 18 }}>
+          <div style={{
+            ...styles.infoCard,
+            background: isDark ? "rgba(15,23,42,0.85)" : "#fff",
+            border: isDark ? "1px solid rgba(148,163,184,0.18)" : "1px solid #e2e8f0",
+            color: isDark ? "#f1f5f9" : "#0f172a"
+          }}>
+            <h3 style={{ ...styles.infoTitle, color: isDark ? "#f8fafc" : "#0f172a" }}>📋 How It Works</h3>
+            <ol style={{ paddingLeft: 18, color: isDark ? "#cbd5f5" : "#475569" }}>
               <li>Complete a short personality & interest assessment (5–7 mins).</li>
               <li>Get prioritized career matches with explanations.</li>
             </ol>
@@ -105,22 +128,21 @@ export default function Home() {
         </section>
 
         <aside style={styles.right}>
-          <div style={styles.profileCard}>
+          <div style={{
+            ...styles.profileCard,
+            background: isDark ? "linear-gradient(135deg, rgba(37,99,235,0.25), rgba(15,23,42,0.85))" : "#fff",
+            border: isDark ? "1px solid rgba(148,163,184,0.18)" : "1px solid #e2e8f0",
+            color: isDark ? "#f8fafc" : "#0f172a"
+          }}>
             <img
               alt="avatar"
-              src={user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || "User")}&background=6c63ff&color=fff`}
-              style={styles.avatar}
+              src={user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || "User")}&background=1e3a8a&color=fff`}
+              style={{ ...styles.avatar, border: isDark ? "2px solid rgba(96,165,250,0.6)" : "2px solid #e2e8f0" }}
             />
             <div style={{ flex: 1 }}>
-              <div style={styles.name}>{user?.displayName || "Welcome!"}</div>
-              <div style={styles.email}>{user?.email}</div>
+              <div style={{ ...styles.name, color: isDark ? "#f8fafc" : "#0f172a" }}>{user?.displayName || "Welcome!"}</div>
+              <div style={{ ...styles.email, color: isDark ? "#cbd5f5" : "#6b7280" }}>{user?.email}</div>
             </div>
-          </div>
-
-          <div style={styles.cardStat}>
-            <strong>Next step</strong>
-            <p style={{ margin: 6 }}>Take the personality test to generate your first set of career matches.</p>
-            <button style={styles.smallBtn} onClick={handleStart}>Begin</button>
           </div>
         </aside>
       </main>
@@ -132,80 +154,63 @@ export default function Home() {
   );
 }
 
-function Feature({ title, desc }) {
+function Feature({ title, desc, isDark }) {
   return (
     <div style={{ marginBottom: 10 }}>
-      <strong>{title}</strong>
-      <div style={{ color: "#4b5563" }}>{desc}</div>
+      <strong style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>{title}</strong>
+      <div style={{ color: isDark ? "#cbd5f5" : "#4b5563" }}>{desc}</div>
     </div>
   );
 }
 
-function StageOption({ icon, title, description, isSelected, onClick }) {
+function StageOption({ icon, title, description, isDark, isActive, onClick }) {
+  const baseBg = isDark ? "rgba(15,23,42,0.75)" : "#ffffff";
+  const activeBg = isDark ? "linear-gradient(135deg, rgba(59,130,246,0.35), rgba(15,23,42,0.9))" : "linear-gradient(135deg, #eef2ff 0%, #dbeafe 100%)";
   return (
-    <div
+    <button
       onClick={onClick}
       style={{
         padding: 20,
-        background: isSelected ? "linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%)" : "#fff",
-        borderRadius: 12,
-        border: isSelected ? "2px solid #6366f1" : "2px solid #e2e8f0",
+        background: isActive ? activeBg : baseBg,
+        borderRadius: 16,
+        border: isActive ? "2px solid rgba(59,130,246,0.6)" : isDark ? "1px solid rgba(148,163,184,0.3)" : "1px solid #e2e8f0",
         cursor: "pointer",
         transition: "all 0.3s ease",
-        textAlign: "center",
-        position: "relative",
+        textAlign: "left",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        boxShadow: isActive ? "0 15px 30px rgba(37, 99, 235, 0.18)" : "none",
+        color: isDark ? "#f8fafc" : "#0f172a"
       }}
       onMouseEnter={(e) => {
-        if (!isSelected) {
-          e.currentTarget.style.borderColor = "#cbd5e1";
-          e.currentTarget.style.transform = "translateY(-2px)";
-          e.currentTarget.style.boxShadow = "0 8px 20px rgba(99,102,241,0.08)";
+        e.currentTarget.style.transform = "translateY(-3px)";
+        if (!isActive) {
+          e.currentTarget.style.boxShadow = "0 12px 28px rgba(37, 99, 235, 0.12)";
         }
       }}
       onMouseLeave={(e) => {
-        if (!isSelected) {
-          e.currentTarget.style.borderColor = "#e2e8f0";
-          e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.transform = "translateY(0)";
+        if (!isActive) {
           e.currentTarget.style.boxShadow = "none";
         }
       }}
     >
-      {isSelected && (
-        <div style={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: "#6366f1",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#fff",
-          fontSize: 12,
-          fontWeight: 700,
-        }}>
-          ✓
-        </div>
-      )}
-      <div style={{ fontSize: 32, marginBottom: 12 }}>{icon}</div>
-      <div style={{ 
-        fontWeight: 600, 
-        fontSize: 15, 
-        color: isSelected ? "#4338ca" : "#0f172a",
-        marginBottom: 8,
+      <div style={{ fontSize: 34 }}>{icon}</div>
+      <div style={{
+        fontWeight: 600,
+        fontSize: 16,
+        color: isActive ? (isDark ? "#bfdbfe" : "#1e3a8a") : (isDark ? "#e2e8f0" : "#0f172a"),
       }}>
         {title}
       </div>
-      <div style={{ 
-        fontSize: 13, 
-        color: isSelected ? "#6366f1" : "#64748b",
-        lineHeight: 1.4,
+      <div style={{
+        fontSize: 14,
+        color: isDark ? "#cbd5f5" : "#6366f1"
       }}>
         {description}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -248,15 +253,15 @@ const styles = {
 
   main: {
     display: "flex",
-    gap: 24,
-    padding: 28,
-    maxWidth: 1100,
+    gap: 28,
+    padding: 32,
+    maxWidth: 1280,
     width: "100%",
     margin: "0 auto",
     boxSizing: "border-box",
   },
   left: { flex: 1, display: "flex", flexDirection: "column", gap: 18 },
-  right: { width: 320, display: "flex", flexDirection: "column", gap: 14 },
+  right: { width: 360, display: "flex", flexDirection: "column", gap: 18 },
 
   heroCard: {
     background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
@@ -337,8 +342,8 @@ const styles = {
   },
   stageGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: 16,
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: 18,
   },
 
   infoCard: {
@@ -396,25 +401,16 @@ const styles = {
 
   profileCard: {
     display: "flex",
-    gap: 12,
+    gap: 16,
     alignItems: "center",
-    background: "#fff",
-    padding: 14,
-    borderRadius: 12,
-    boxShadow: "0 8px 22px rgba(15,23,42,0.04)",
+    padding: 18,
+    borderRadius: 16,
+    boxShadow: "0 12px 26px rgba(15,23,42,0.12)",
   },
-  avatar: { width: 64, height: 64, borderRadius: 12, objectFit: "cover" },
+  avatar: { width: 72, height: 72, borderRadius: "50%", objectFit: "cover" },
   name: { fontWeight: 700 },
   email: { fontSize: 13, color: "#6b7280" },
 
-  cardStat: {
-    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-    padding: 20,
-    borderRadius: 16,
-    boxShadow: "0 12px 30px rgba(15,23,42,0.06)",
-    textAlign: "center",
-    border: "1px solid #e2e8f0",
-  },
   statIcon: {
     fontSize: 32,
     marginBottom: 12,
@@ -430,20 +426,6 @@ const styles = {
     fontSize: 14,
     color: "#64748b",
     lineHeight: 1.5,
-  },
-
-  smallBtn: {
-    marginTop: 8,
-    background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
-    color: "#fff",
-    border: "none",
-    padding: "10px 16px",
-    borderRadius: 10,
-    cursor: "pointer",
-    fontWeight: 600,
-    width: "100%",
-    boxShadow: "0 4px 12px rgba(6,182,212,0.3)",
-    transition: "all 0.3s ease",
   },
 
   statsGrid: {

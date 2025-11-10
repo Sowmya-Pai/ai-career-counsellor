@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider } from "../firebase";
 import { signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { isDark: dark, toggleTheme } = useTheme();
 
   useEffect(() => {
     // If user already signed in, go to home
@@ -31,28 +33,44 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.page}>
+    <div style={{ 
+      ...styles.page, 
+      background: dark ? "linear-gradient(180deg,rgb(35, 24, 50) 0%,rgb(33, 15, 39) 100%)" : "linear-gradient(180deg,#f6f9ff 0%, #93c5fd 100%)",
+      color: dark ? "#f8fafc" : "#0f172a"
+    }}>
       <header style={styles.header}>
         <div style={styles.brand}>
           <div style={styles.logo}>AI</div>
-          <span style={styles.title}>AI Career Compass</span>
+          <span style={{ ...styles.title, color: dark ? "#ffffff" : "#0f172a" }}>AI Career Compass</span>
         </div>
         <nav style={styles.nav}>
-          <button onClick={() => window.scrollTo({ top: 400, behavior: "smooth" })} style={styles.link}>About</button>
-          <button onClick={() => navigate("/home")} style={styles.cta}>Take Assessment</button>
+          <button onClick={() => window.scrollTo({ top: 400, behavior: "smooth" })} style={{ ...styles.link, color: dark ? "#e5e7eb" : "#374151" }}>About</button>
+          <button onClick={toggleTheme} aria-label="Toggle theme" style={{ ...styles.link, color: dark ? "#e5e7eb" : "#374151" }}>
+            {dark ? "Light mode" : "Dark mode"}
+          </button>
+          <button onClick={() => navigate("/home")} style={{ 
+            ...styles.cta, 
+            background: dark ? "#ffffff" : "#1f2937",
+            color: dark ? "#111827" : "#ffffff" 
+          }}>Take Assessment</button>
         </nav>
       </header>
 
       <main style={styles.main}>
         <section style={styles.hero}>
-          <h1 style={styles.h1}>Find the best career path for you</h1>
-          <p style={styles.lead}>
+          <h1 style={{ ...styles.h1, color: dark ? "#ffffff" : "#0f172a" }}>Find the best career path for you</h1>
+          <p style={{ ...styles.lead, color: dark ? "#e2e8f0" : "#4b5563" }}>
             Answer a short assessment and get a personalized career report based on your interests and personality.
           </p>
 
-          <div style={styles.card}>
+          <div style={{ 
+            ...styles.card, 
+            background: dark ? "#ffffff" : "#ffffff",
+            color: "#0f172a",
+            boxShadow: dark ? "0 16px 48px rgba(15, 23, 42, 0.18)" : "0 12px 36px rgba(15,23,42,0.12)"
+          }}>
             <h2 style={{ marginTop: 0 }}>Welcome</h2>
-            <p style={{ color: "#030319ff" }}>Sign in with Google to start your personalized assessment and save your progress.</p>
+            <p style={{ color: "#0f172a" }}>Sign in with Google to begin your assessment and save progress.</p>
 
             <button
               onClick={handleGoogleSignIn}
@@ -68,24 +86,11 @@ export default function Login() {
               </svg>
               {loading ? "Signing in..." : "Sign in with Google"}
             </button>
-
-            <ul style={styles.benefits}>
-              <li>Personalized career suggestions</li>
-              <li>Save progress across devices</li>
-              <li>Secure Google authentication</li>
-            </ul>
           </div>
-        </section>
-
-        <section id="about" style={styles.info}>
-          <h3>How it works</h3>
-          <p style={{ maxWidth: 720 }}>
-            The app uses AI to analyze your answers and recommends suitable career paths.
-          </p>
         </section>
       </main>
 
-      <footer style={styles.footer}>
+      <footer style={{ ...styles.footer, color: dark ? "#e5e7eb" : "#475569" }}>
         <small>© {new Date().getFullYear()} AI Career Compass — Powered by Who You Are.</small>
       </footer>
     </div>
@@ -98,8 +103,8 @@ const styles = {
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-    background: "linear-gradient(180deg,#f6f9ff 0%, #2fa2e0ff 40%)",
-    color: "#080c30ff",
+    background: "linear-gradient(180deg, #0ea5e9 0%, #6366f1 100%)",
+    color: "#f8fafc",
   },
   header: {
     display: "flex",
@@ -126,10 +131,10 @@ const styles = {
   },
   title: { fontWeight: 700, fontSize: 18 },
   nav: { display: "flex", gap: 12, alignItems: "center" },
-  link: { background: "transparent", border: "none", color: "#444", cursor: "pointer" },
+  link: { background: "transparent", border: "none", color: "#e5e7eb", cursor: "pointer" },
   cta: {
-    background: "#1f2937",
-    color: "#ffffffff",
+    background: "#ffffff",
+    color: "#111827",
     border: "none",
     padding: "8px 14px",
     borderRadius: 8,
@@ -137,16 +142,17 @@ const styles = {
   },
   main: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", padding: "24px" },
   hero: { width: "100%", maxWidth: 1100, textAlign: "center", paddingTop: 30 },
-  h1: { fontSize: 34, margin: 0, color: "#03101cff" },
-  lead: { color: "#445774ff", marginTop: 12, marginBottom: 24 },
+  h1: { fontSize: 34, margin: 0, color: "#ffffff" },
+  lead: { color: "#e2e8f0", marginTop: 12, marginBottom: 24 },
   card: {
     margin: "18px auto 0",
-    background: "#8ed4e9ff",
+    background: "#ffffff",
     borderRadius: 12,
-    boxShadow: "0 12px 40px rgba(99, 105, 115, 0.08)",
+    boxShadow: "0 16px 48px rgba(15, 23, 42, 0.18)",
     padding: 28,
     maxWidth: 680,
     textAlign: "left",
+    color: "#0f172a",
   },
   googleBtn: {
     display: "inline-flex",
@@ -159,8 +165,6 @@ const styles = {
     fontWeight: 600,
     marginTop: 12,
   },
-  benefits: { marginTop: 14, color: "#555", display: "grid", gap: 6 },
-  info: { marginTop: 40, maxWidth: 1100, padding: "18px", textAlign: "center" },
-  footer: { textAlign: "center", padding: "18px 12px", color: "#6b7280" },
+  footer: { textAlign: "center", padding: "18px 12px", color: "#e5e7eb" },
 };
 // ...existing code...

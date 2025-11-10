@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
+import { useTheme } from "../theme/ThemeContext";
 
 export const mbtiCareers = {
   INTJ: ["Scientist", "Engineer", "Architect", "Software Developer"],
@@ -485,6 +486,7 @@ Fits those who thrive on performance energy and presence.`,
 export default function SuitableCareers() {
   const navigate = useNavigate();
   const reportRef = useRef(null);
+  const { isDark } = useTheme();
 
   const personalityData = JSON.parse(localStorage.getItem("personalityTraits") || "{}");
   const E = personalityData.E || 0;
@@ -665,42 +667,105 @@ export default function SuitableCareers() {
     }
   }
 
+  const pageBackground = isDark
+    ? "linear-gradient(135deg, rgba(2,6,23,0.92), rgba(30,58,138,0.85)), url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1800&q=70')"
+    : "linear-gradient(135deg, rgba(226,232,240,0.92), rgba(191,219,254,0.82)), url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1800&q=70')";
+
+  const cardStyle = {
+    ...styles.card,
+    background: isDark ? "rgba(15,23,42,0.9)" : "rgba(255,255,255,0.96)",
+    border: isDark ? "1px solid rgba(148,163,184,0.25)" : "1px solid rgba(226,232,240,0.85)",
+    boxShadow: isDark ? "0 18px 40px rgba(8,15,40,0.6)" : "0 22px 44px rgba(15,23,42,0.14)",
+    color: isDark ? "#f8fafc" : "#0f172a",
+    backdropFilter: "blur(10px)"
+  };
+
+  const pillBackground = isDark ? "rgba(37,99,235,0.22)" : "#f1f5f9";
+  const pillTitle = isDark ? "#bfdbfe" : "#1d4ed8";
+  const pillText = isDark ? "#e2e8f0" : "#374151";
+  const secondaryText = isDark ? "#cbd5f5" : "#6b7280";
+
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
+    <div
+      style={{
+        ...styles.page,
+        background: pageBackground,
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        color: isDark ? "#f8fafc" : "#0f172a"
+      }}
+    >
+      <header style={{
+        ...styles.header,
+        background: isDark ? "rgba(15,23,42,0.7)" : "rgba(255,255,255,0.92)",
+        borderBottom: isDark ? "1px solid rgba(148,163,184,0.25)" : "1px solid rgba(226,232,240,0.8)",
+        backdropFilter: "blur(12px)",
+        color: isDark ? "#f8fafc" : "#0f172a"
+      }}>
         <div style={styles.brand}>
-          <div style={styles.logo}>AI</div>
+          <div style={{
+            ...styles.logo,
+            boxShadow: isDark ? "0 10px 20px rgba(99,102,241,0.35)" : styles.logo.boxShadow
+          }}>AI</div>
           <div>Career Counsellor</div>
         </div>
       </header>
 
       <main style={styles.container}>
-        <div ref={reportRef} style={styles.card}>
-          <h2 style={{ marginTop: 0 }}>Recommended Careers for {mbti}</h2>
+        <div ref={reportRef} style={cardStyle}>
+          <h2 style={{ marginTop: 0, color: isDark ? "#f8fafc" : "#0f172a" }}>Recommended Careers for {mbti}</h2>
 
           {careers.length === 0 ? (
-            <p style={{ color: "#374151" }}>No specific recommended careers found.</p>
+            <p style={{ color: secondaryText }}>No specific recommended careers found.</p>
           ) : (
             careers.map((career) => (
-              <div key={career} style={{ background: "#f8fafc", padding: 12, borderRadius: 8, marginBottom: 12 }}>
-                <h4 style={{ margin: 0 }}>{career}</h4>
-                <p style={{ marginTop: 6, color: "#374151", whiteSpace: "pre-line" }}>
+              <div
+                key={career}
+                style={{
+                  background: pillBackground,
+                  padding: 16,
+                  borderRadius: 12,
+                  marginBottom: 14,
+                  border: isDark ? "1px solid rgba(59,130,246,0.35)" : "1px solid rgba(148,163,184,0.25)",
+                  boxShadow: isDark ? "0 12px 24px rgba(37,99,235,0.3)" : "0 10px 22px rgba(148,163,184,0.2)"
+                }}
+              >
+                <h4 style={{ margin: 0, color: pillTitle }}>{career}</h4>
+                <p style={{ marginTop: 6, color: pillText, whiteSpace: "pre-line" }}>
                   {careerDetails[career.replace(/\s+/g, '')] || "This career matches core strengths detected in your profile."}
                 </p>
               </div>
             ))
           )}
 
-          <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
-            <button style={styles.primary} onClick={() => navigate("/assessment/graph-result")}> 
+          <div style={{ marginTop: 24, display: 'flex', gap: 10 }}>
+            <button
+              style={{
+                ...styles.primary,
+                background: isDark ? "linear-gradient(135deg,#38bdf8,#6366f1)" : styles.primary.background,
+                boxShadow: isDark ? "0 12px 26px rgba(59,130,246,0.32)" : "0 10px 22px rgba(11,94,215,0.22)"
+              }}
+              onClick={() => navigate("/assessment/graph-result")}
+            >
               Back to Summary
             </button>
-            <button data-skip-pdf style={styles.pdfBtn} onClick={downloadPDF}>Download PDF</button>
+            <button
+              data-skip-pdf
+              style={{
+                ...styles.pdfBtn,
+                background: isDark ? "linear-gradient(135deg,#10b981,#34d399)" : styles.pdfBtn.background,
+                boxShadow: isDark ? "0 12px 24px rgba(16,185,129,0.35)" : "0 10px 20px rgba(16,185,129,0.22)"
+              }}
+              onClick={downloadPDF}
+            >
+              Download PDF
+            </button>
           </div>
         </div>
       </main>
 
-      <footer style={styles.footer}>© {new Date().getFullYear()} AI Career Counsellor</footer>
+      <footer style={{ ...styles.footer, color: secondaryText }}>© {new Date().getFullYear()} AI Career Counsellor</footer>
     </div>
   );
 }
