@@ -718,7 +718,7 @@ export default function SuitableCareers() {
             ...styles.logo,
             boxShadow: isDark ? "0 10px 20px rgba(99,102,241,0.35)" : styles.logo.boxShadow
           }}>AI</div>
-          <div>Career Counsellor</div>
+          <div>Career Compass</div>
         </div>
       </header>
 
