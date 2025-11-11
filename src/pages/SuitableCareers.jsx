@@ -775,7 +775,7 @@ export default function SuitableCareers() {
         </div>
       </main>
 
-      <footer style={{ ...styles.footer, color: secondaryText }}>© {new Date().getFullYear()} AI Career Counsellor</footer>
+      <footer style={{ ...styles.footer, color: secondaryText }}>© {new Date().getFullYear()} AI Career Compass</footer>
     </div>
   );
 }
