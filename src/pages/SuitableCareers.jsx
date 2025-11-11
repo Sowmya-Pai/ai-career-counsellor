@@ -4,7 +4,7 @@ import html2canvas from "html2canvas";
 import { useTheme } from "../theme/ThemeContext";
 
 export const mbtiCareers = {
-  INTJ: ["Scientist", "Engineer", "Architect", "Software Developer"],
+  INTJ: ["Scientist", "Engineer", "Architect", "Software Developer","Astronaut"],
   INTP: ["Analyst", "Researcher", "Programmer", "Philosopher"],
   ENTJ: ["Executive", "Manager", "Entrepreneur", "Lawyer"],
   ENTP: ["Inventor", "Consultant", "Journalist", "Marketer"],
@@ -16,7 +16,7 @@ export const mbtiCareers = {
   ISFJ: ["Nurse", "Healthcare Provider", "Librarian", "Administrator"],
   ESTJ: ["Project Manager", "Banker", "Executive", "Judge"],
   ESFJ: ["Nurse", "Teacher", "Social Worker", "Event Planner"],
-  ISTP: ["Engineer", "Mechanic", "Pilot", "Detective"],
+  ISTP: ["Engineer", "Mechanic", "Pilot", "Detective","Astronaut"],
   ISFP: ["Designer", "Chef", "Artist", "Physical Therapist"],
   ESTP: ["Sales", "Detective", "Entrepreneur", "Paramedic"],
   ESFP: ["Performer", "Guide", "Event Coordinator", "Fitness Trainer"],
@@ -58,6 +58,16 @@ Provides measurable outputs and rapid feedback loops.
 Matches tolerance for sustained concentration and detail.
 Enables continuous learning of new technologies.
 Aligns with building scalable digital solutions.`,
+
+  Astronaut: `Travels to space and conducts experiments.
+Operates in highly challenging, high-stakes environments. 
+Suited to disciplined, analytical thinkers with strong emotional control.
+ Requires mastery of scientific, mechanical, and problem-solving skills. 
+ Demands physical endurance, mental resilience, and adaptability. 
+ Emphasizes teamwork, communication, and strict procedural accuracy. 
+ Rewards curiosity, exploration, and pushing human boundaries. 
+ Fits individuals who thrive under pressure and remain calm in uncertainty. 
+ Represents a pursuit driven by purpose, discovery, and excellence.`,
 
   Analyst: `Extracts insight from data and patterns.
 Suited to detail-oriented and investigative thinkers.
